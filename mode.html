@@ -21,25 +21,28 @@
     </div>
 </nav>
 
-<form style="margin-top: 80px;">
-    <div class="container text-center" style="max-width: 240px;">
+<div class="container text-center" style="margin-top: 80px; max-width: 240px;">
+    <form action="" id="new_session" onsubmit="create_room()">
         <div class="row justify-content-center">
             <div class="col">
-                <button class="btn btn-primary mb-3" type="submit">Spiel erstellen</button>
+                <button class="btn btn-primary mb-3" form="new_session" type="submit">Spiel erstellen</button>
             </div>
         </div>
+    </form>
+    <form action="" id="join_room" onsubmit="join_room()">
         <div class="row justify-content-center">
             <div class="col text-end" style="padding-right: 6px;">
-                <label for="session_id">
-                    <input class="form-control" id="session_id" maxlength="6" placeholder="Nummer" type="text">
+                <label for="room_id">
+                    <input class="form-control" form="join_room" id="room_id" maxlength="6" minlength="6" name="room_id"
+                           placeholder="Nummer" required type="text">
                 </label>
             </div>
             <div class="col text-start" style="padding-left: 6px;">
-                <button class="btn btn-primary mb-3" type="submit">Beitreten</button>
+                <button class="btn btn-primary mb-3" form="join_room" type="submit">Beitreten</button>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 <script crossorigin="anonymous"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

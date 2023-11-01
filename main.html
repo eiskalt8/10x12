@@ -21,22 +21,23 @@
     </div>
 </nav>
 
-<form style="margin-top: 80px;">
-    <div class="container text-center" style="max-width: 300px;">
+<div class="container text-center" style="margin-top: 80px; max-width: 300px;">
+    <form action="mode.html" autocomplete="on" id="user" onsubmit="safe_name()">
         <div class="row justify-content-center">
             <div class="col" style="margin-bottom: 6px;">
-                <label for="username">
-                    <input class="form-control" id="username" maxlength="20" placeholder="Spielername" type="text">
+                <label for="username-input">
+                    <input class="form-control" form="user" id="username-input" maxlength="20" minlength="1"
+                           name="username" placeholder="Spielername" required type="text">
                 </label>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col" style="margin-top: 6px;">
-                <button class="btn btn-primary mb-3" formaction="mode.html" type="submit">Weiter</button>
-            </div>
+    </form>
+    <div class="row justify-content-center">
+        <div class="col" style="margin-top: 6px;">
+            <button class="btn btn-primary mb-3" form="user" type="submit">Weiter</button>
         </div>
     </div>
-</form>
+</div>
 
 <script crossorigin="anonymous"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
