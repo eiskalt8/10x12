@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -8,7 +8,7 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
     <script src="js/skript.js"></script>
 </head>
-<body>
+<body onload="get_name()">
 
 <nav class="navbar">
     <div class="container-fluid">
@@ -21,8 +21,10 @@
     </div>
 </nav>
 
-
-<div class="container text-center" style="padding-top: 80px">
+<div class="container text-center" style="padding-top: 40px; padding-bottom: 20px">
+    <p><strong id="username"></strong></p>
+</div>
+<div class="container text-center">
     <table class="table table-striped table-hover table-bordered border-primary">
         <thead>
         <tr>

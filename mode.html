@@ -8,7 +8,7 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
     <script src="js/skript.js"></script>
 </head>
-<body>
+<body onload="get_name()">
 
 <nav class="navbar">
     <div class="container-fluid">
@@ -21,7 +21,10 @@
     </div>
 </nav>
 
-<div class="container text-center" style="margin-top: 80px; max-width: 240px;">
+<div class="container text-center" style="padding-top: 40px; padding-bottom: 20px">
+    <p><strong id="username"></strong></p>
+</div>
+<div class="container text-center" style="max-width: 240px;">
     <form action="" id="new_session" onsubmit="create_room()">
         <div class="row justify-content-center">
             <div class="col">
@@ -29,7 +32,7 @@
             </div>
         </div>
     </form>
-    <form action="" id="join_room" onsubmit="join_room()">
+    <form action="javascript:void(0);" id="join_room" method="get" onsubmit="check_room()">
         <div class="row justify-content-center">
             <div class="col text-end" style="padding-right: 6px;">
                 <label for="room_id">

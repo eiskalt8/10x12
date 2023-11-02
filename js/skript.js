@@ -7,6 +7,7 @@ function get_input(inputid) {
     return localStorage.getItem(inputid)
 }
 */
+
 //handle name
 function safe_name() {
     const name = document.getElementById("username-input").value
@@ -15,8 +16,14 @@ function safe_name() {
 }
 
 function get_name() {
-    return localStorage.getItem("username")
+    const pElement = document.getElementById(`username`);
+    if (localStorage.getItem("username")) {
+        pElement.textContent = localStorage.getItem("username");
+    } else {
+        pElement.textContent = "Spielername fehlt!";
+    }
 }
+
 
 //create room
 function create_room() {
@@ -24,17 +31,42 @@ function create_room() {
 }
 
 //join existing room
-//create room
-function join_room() {
 
+
+function check_room() {
+    const room = document.getElementById("room_id").value;
+
+    fetch('/check_room', {
+        method: 'POST',
+        body: new URLSearchParams({'room': room}),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.error) {
+                //TODO change to Text on page
+                alert("Ungültige Raum-ID. Bitte gib eine gültige ein.");
+            } else {
+                // forwarding
+                window.location.href = "game.html?room=" + room;
+            }
+        })
+        .catch(error => {
+            //TODO change to Text on page
+            alert("Ungültige Raum-ID oder Verbindungsproblem.");
+        });
+    // safe room-ID
+    localStorage.setItem("room", room);
 }
+
 
 //Darkmode
 if (localStorage.getItem("darkMode") === true) {
-            document.documentElement.setAttribute('data-bs-theme', 'dark')
-    }
+    document.documentElement.setAttribute('data-bs-theme', 'dark')
+}
 
-document.getElementById('btnSwitch').addEventListener('click', () => {
+/*document.getElementById('btnSwitch').addEventListener('click', () => {
     if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
         document.documentElement.setAttribute('data-bs-theme', 'light')
         localStorage.setItem("darkMode", false)
@@ -42,4 +74,4 @@ document.getElementById('btnSwitch').addEventListener('click', () => {
         document.documentElement.setAttribute('data-bs-theme', 'dark')
         localStorage.setItem("darkMode", true)
     }
-})
+})*/
