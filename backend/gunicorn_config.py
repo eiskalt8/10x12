@@ -3,8 +3,8 @@ import logging
 import gunicorn
 
 gunicorn.SERVER = "Webserver"
-bind = "0.0.0.0"
-gunicorn.SERVER_PORT = 8080
+bind = "0.0.0.0:8080"
+workers = 4
 gunicorn.SERVER_NAME = "Gunicorn Server"
 gunicorn.SERVER_SOFTWARE = "Webserver"
 
