@@ -12,6 +12,10 @@ function get_input(inputid) {
 function safe_name() {
     const name = document.getElementById("username-input").value
     localStorage.setItem("username", name)
+    //create uuid
+    const uuid = self.crypto.randomUUID()
+    localStorage.setItem("uuid", uuid)
+
 
 }
 

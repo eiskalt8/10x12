@@ -4,7 +4,8 @@ import gunicorn
 
 gunicorn.SERVER = "Webserver"
 bind = "0.0.0.0:8080"
-workers = 4
+workers = 1
+worker_class = "eventlet"
 gunicorn.SERVER_NAME = "Gunicorn Server"
 gunicorn.SERVER_SOFTWARE = "Webserver"
 
