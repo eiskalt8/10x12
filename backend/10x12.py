@@ -37,7 +37,7 @@ def save_name(username, uuid):
     if uuid.length == 36 and username.length <= 20:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Users (UserID, UserName) VALUES (?, ?)", [uuid, username])
+        cursor.execute("INSERT INTO Users (UserID, UserName, last_used) VALUES (?, ?, DATE('now'))", [uuid, username])
         conn.commit()
 
 
