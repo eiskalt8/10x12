@@ -32,12 +32,12 @@ def game():
 
 
 # function on main.html to safe user with uuid
-@app.route('/save_name')
-def save_name(uuid, name):
-    if uuid.length == 36 and name.length <= 20:
+@socketio.on('save_name')
+def save_name(username, uuid):
+    if uuid.length == 36 and username.length <= 20:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Users (UserID, UserName) VALUES (?, ?)", [uuid, name])
+        cursor.execute("INSERT INTO Users (UserID, UserName) VALUES (?, ?)", [uuid, username])
         conn.commit()
 
 
@@ -51,7 +51,7 @@ def check_room(room):
         return False  # User should not be able to join
 
 
-# TODO check if possible to combine these (until 44) in one static folder or something
+# TODO check if possible to combine these (until skript.js) in one static folder or something
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory("../website", "logo.ico")
@@ -67,18 +67,14 @@ def js():
     return send_from_directory("../website/js", 'skript.js')
 
 
-@socketio.on('my_event')
-def checkping():
-    for x in range(5):
-        cmd = 'ping -c 1 8.8.8.8|head -2|tail -1'
-        listing1 = subprocess.run(cmd,stdout=subprocess.PIPE,text=True,shell=True)
-        sid = request.sid
-        emit('server', {"data1":x, "data":listing1.stdout}, room=sid)
-        socketio.sleep(1)
-
-@app.route('/home')
-def home():
-    return render_template('base.html')
+# @socketio.on('my_event')
+# def checkping():
+#    for x in range(5):
+#        cmd = 'ping -c 1 8.8.8.8|head -2|tail -1'
+#        listing1 = subprocess.run(cmd,stdout=subprocess.PIPE,text=True,shell=True)
+#        sid = request.sid
+#        emit('server', {"data1":x, "data":listing1.stdout}, room=sid)
+#        socketio.sleep(1)
 
 
 if __name__ == '__main__':

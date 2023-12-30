@@ -8,6 +8,20 @@ function get_input(inputid) {
 }
 */
 
+//Check for secure environment because uuid etc. needs this
+if(window.isSecureContext) {
+    console.log("Ist sicher")
+} else{
+        console.log("Nix sicher")
+}
+
+function io() {
+    return undefined;
+}
+
+const socket = io(); //socketio connection to server//
+
+
 //handle name
 function safe_name() {
     const name = document.getElementById("username-input").value
@@ -15,7 +29,7 @@ function safe_name() {
     //create uuid
     const uuid = self.crypto.randomUUID()
     localStorage.setItem("uuid", uuid)
-
+    socket.emit("safe_name", { username: name, uuid: uuid })
 
 }
 
