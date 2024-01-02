@@ -7,20 +7,14 @@ function get_input(inputid) {
     return localStorage.getItem(inputid)
 }
 */
+import {io} from "socket.io-client";
 
-//Check for secure environment because uuid etc. needs this
-if(window.isSecureContext) {
-    console.log("Ist sicher")
-} else{
-        console.log("Nix sicher")
-}
+const socket = io("ws://10x12.run.place:8080");
 
-function io() {
-    return undefined;
-}
 
-const socket = io(); //socketio connection to server//
-
+socket.on('connect', function () {
+    console.log("Connected js")
+});
 
 //handle name
 function safe_name() {
@@ -29,7 +23,7 @@ function safe_name() {
     //create uuid
     const uuid = self.crypto.randomUUID()
     localStorage.setItem("uuid", uuid)
-    socket.emit("safe_name", { username: name, uuid: uuid })
+    socket.emit("safe_name", {username: name, uuid: uuid})
 
 }
 

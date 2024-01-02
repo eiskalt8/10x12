@@ -1,7 +1,7 @@
-from flask import Flask, render_template, send_from_directory, request
-from flask_socketio import SocketIO, emit
 import sqlite3
-import subprocess
+
+from flask import Flask, render_template, send_from_directory
+from flask_socketio import SocketIO
 
 app = Flask(__name__, template_folder='../website/')
 socketio = SocketIO(app, async_mode='eventlet')
@@ -34,6 +34,7 @@ def game():
 # function on main.html to safe user with uuid
 @socketio.on('save_name')
 def save_name(username, uuid):
+    print(username, uuid)
     if uuid.length == 36 and username.length <= 20:
         conn = connect_to_db()
         cursor = conn.cursor()
@@ -78,5 +79,4 @@ def js():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0', port=8080)
