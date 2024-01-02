@@ -33,9 +33,10 @@ def game():
 
 # function on main.html to safe user with uuid
 @socketio.on('save_name')
-def save_name(username, uuid):
-    print(username, uuid)
-    if uuid.length == 36 and username.length <= 20:
+def save_name(data):
+    username = data['username']
+    uuid = data['uuid']
+    if len(uuid) == 36 and len(username) <= 20:
         conn = connect_to_db()
         cursor = conn.cursor()
         cursor.execute("INSERT INTO Users (UserID, UserName, last_used) VALUES (?, ?, DATE('now'))", [uuid, username])

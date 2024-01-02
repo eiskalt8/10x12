@@ -7,24 +7,14 @@ function get_input(inputid) {
     return localStorage.getItem(inputid)
 }
 */
-import {io} from "socket.io-client";
-
-const socket = io("ws://10x12.run.place:8080");
-
-
-socket.on('connect', function () {
-    console.log("Connected js")
-});
 
 //handle name
-function safe_name() {
+function save_name() {
     const name = document.getElementById("username-input").value
     localStorage.setItem("username", name)
     //create uuid
     const uuid = self.crypto.randomUUID()
     localStorage.setItem("uuid", uuid)
-    socket.emit("safe_name", {username: name, uuid: uuid})
-
 }
 
 function get_name() {
