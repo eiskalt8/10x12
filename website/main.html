@@ -22,7 +22,7 @@
         $(document).ready(function () {
             const socket = io();
             socket.on("connect", function () {
-                console.log("connected html")
+                console.log("connected")
             });
             $('form#user').submit(function () {
                 socket.emit("save_name", {

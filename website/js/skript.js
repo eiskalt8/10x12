@@ -12,9 +12,14 @@ function get_input(inputid) {
 function save_name() {
     const name = document.getElementById("username-input").value
     localStorage.setItem("username", name)
-    //create uuid
-    const uuid = self.crypto.randomUUID()
-    localStorage.setItem("uuid", uuid)
+    //create + check uuid
+    const existingUuid = localStorage.getItem("uuid");
+
+    if (!existingUuid) {
+        // UUID not in local storage
+        const uuid = self.crypto.randomUUID();
+        localStorage.setItem("uuid", uuid);
+    }
 }
 
 function get_name() {

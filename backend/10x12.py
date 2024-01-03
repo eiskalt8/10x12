@@ -39,7 +39,12 @@ def save_name(data):
     if len(uuid) == 36 and len(username) <= 20:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Users (UserID, UserName, last_used) VALUES (?, ?, DATE('now'))", [uuid, username])
+        if cursor.execute("Select * FROM Users where UserID = ? ", (uuid,)).fetchone() is None:
+            cursor.execute("INSERT INTO Users (UserID, UserName, last_used) VALUES (?, ?, DATE('now'))",
+                           [uuid, username])
+        else:
+            cursor.execute("UPDATE Users set UserName = ?, last_used = DATE('now') where UserID = ?",
+                           [username, uuid])
         conn.commit()
 
 
