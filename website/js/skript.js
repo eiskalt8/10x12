@@ -31,12 +31,6 @@ function get_name() {
     }
 }
 
-
-//create room
-function create_room() {
-
-}
-
 //join existing room
 
 

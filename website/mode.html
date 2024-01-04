@@ -7,6 +7,41 @@
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet">
     <script src="js/skript.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg=="
+            referrerpolicy="no-referrer"
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            referrerpolicy="no-referrer"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script charset="utf-8" type="text/javascript">
+        $(document).ready(function () {
+            const socket = io();
+            socket.on("connect", function () {
+                console.log("connected")
+            });
+
+            $('#new_room').submit(function (event) {
+                event.preventDefault();
+
+                // sends create_room event with local storage data
+                socket.emit("create_room", {
+                    username: localStorage.getItem("username"),
+                    uuid: localStorage.getItem("uuid")
+                });
+
+                // forwarding to game.html/room_number
+                socket.on("room_created", function (data) {
+                  const roomNumber = data.roomNumber;
+                  window.location.href = `/game.html/${roomNumber}`;
+                });
+            });
+        });
+    </script>
 </head>
 <body onload="get_name()">
 
@@ -25,14 +60,14 @@
     <p><strong id="username"></strong></p>
 </div>
 <div class="container text-center" style="max-width: 240px;">
-    <form action="" id="new_session" onsubmit="create_room()">
+    <form action="" id="new_room">
         <div class="row justify-content-center">
             <div class="col">
-                <button class="btn btn-primary mb-3" form="new_session" type="submit">Spiel erstellen</button>
+                <button class="btn btn-primary mb-3" form="new_room" type="submit">Spiel erstellen</button>
             </div>
         </div>
     </form>
-    <form action="javascript:void(0);" id="join_room" method="get" onsubmit="check_room()">
+    <form action="javascript:void(0);" id="join_room" onsubmit="check_room()">
         <div class="row justify-content-center">
             <div class="col text-end" style="padding-right: 6px;">
                 <label for="room_id">
