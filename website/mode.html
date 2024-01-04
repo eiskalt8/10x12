@@ -28,16 +28,25 @@
             $('#new_room').submit(function (event) {
                 event.preventDefault();
 
-                // sends create_room event with local storage data
+                // sends create_room event with uuid
                 socket.emit("create_room", {
-                    username: localStorage.getItem("username"),
                     uuid: localStorage.getItem("uuid")
                 });
 
                 // forwarding to game.html/room_number
                 socket.on("room_created", function (data) {
                   const roomNumber = data.roomNumber;
-                  window.location.href = `/game.html/${roomNumber}`;
+                  window.location.href = `/game/${roomNumber}`;
+                });
+            });
+
+            $('#join_room').submit(function (event) {
+                event.preventDefault();
+
+                //sends join_room event room_id and uuid
+                socket.emit("join_room", {
+                    room_number: document.getElementById('room_id').value,
+                    uuid: localStorage.getItem("uuid")
                 });
             });
         });
@@ -60,18 +69,18 @@
     <p><strong id="username"></strong></p>
 </div>
 <div class="container text-center" style="max-width: 240px;">
-    <form action="" id="new_room">
+    <form id="new_room">
         <div class="row justify-content-center">
             <div class="col">
                 <button class="btn btn-primary mb-3" form="new_room" type="submit">Spiel erstellen</button>
             </div>
         </div>
     </form>
-    <form action="javascript:void(0);" id="join_room" onsubmit="check_room()">
+    <form id="join_room">
         <div class="row justify-content-center">
             <div class="col text-end" style="padding-right: 6px;">
                 <label for="room_id">
-                    <input class="form-control" form="join_room" id="room_id" maxlength="6" minlength="6" name="room_id"
+                    <input class="form-control" form="join_room" id="room_id" maxlength="6" minlength="6"
                            placeholder="Nummer" required type="text">
                 </label>
             </div>

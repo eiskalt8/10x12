@@ -27,9 +27,10 @@ def mode():
     return render_template('mode.html')
 
 
-@app.route('/game.html')
-def game():
-    return render_template('game.html')
+@app.route('/game/<int:roomNumber>')
+def game(roomNumber):
+
+    return render_template('game.html', roomNumber=roomNumber)
 
 
 # TODO check if possible to combine these (until skript.js) in one static folder or something
@@ -70,7 +71,7 @@ def save_name(data):
 def create_room(data):
     uuid = data['uuid']
 
-    # Raumnummer generieren (6-stellig)
+    # create roomNumber (6-digits)
     room_number = random.randrange(100000, 1000000)
 
     conn = connect_to_db()
