@@ -93,7 +93,7 @@ def create_room(data):
 
 
 # function on mode.html to check if a user could join a room or not
-@socketio.on('check_room')
+@socketio.on('join_room')
 def check_room(data):
     room_number = data['room_number']
     uuid = data['uuid']
@@ -102,22 +102,25 @@ def check_room(data):
     cursor = conn.cursor()
 
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
-        locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
-        if locked == 0:
-            result = cursor.execute("SELECT Users FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
-            if result:
-                users = result[0]
-                user_list = users.split(",")
+        result = cursor.execute("SELECT Users FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+        if result:
+            users = result[0]
+            user_list = users.split(",")
 
-                if uuid not in user_list:
+            if uuid not in user_list:
+                locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+                if locked[0] == 0:  # 0 not locked 1 locked
                     uuid = "," + uuid
                     cursor.execute(
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuid, room_number])
                     conn.commit()
+                    emit("to_room", {'roomNumber': room_number})
+                else:
+                    emit("error_message", {'message': 'Der Raum ist gesperrt'})
+                    return
+            else:
                 emit("to_room", {'roomNumber': room_number})
-        else:
-            emit("error_message", {'message': 'Der Raum ist gesperrt'})
     else:
         emit("error_message", {'message': 'Der Raum existiert nicht'})
     conn.close()
