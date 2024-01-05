@@ -29,7 +29,6 @@ def mode():
 
 @app.route('/game/<int:roomNumber>')
 def game(roomNumber):
-
     return render_template('game.html', roomNumber=roomNumber)
 
 
@@ -64,6 +63,7 @@ def save_name(data):
             cursor.execute("UPDATE Users set UserName = ?, last_used = DATE('now') where UserID = ?",
                            [username, uuid])
         conn.commit()
+        cursor.close()
 
 
 # function on mode.html to create a room
@@ -87,17 +87,40 @@ def create_room(data):
     conn.commit()
 
     # Socket-Event to Client for forwarding
-    emit("room_created", {'roomNumber': room_number})
+    emit("to_room", {'roomNumber': room_number})
+
+    conn.close()
 
 
 # function on mode.html to check if a user could join a room or not
-@app.route('/check_room')
-def check_room(room):
-    # TODO make database request
-    if room == 123456:
-        return True  # User should be able to join
+@socketio.on('check_room')
+def check_room(data):
+    room_number = data['room_number']
+    uuid = data['uuid']
+
+    conn = connect_to_db()
+    cursor = conn.cursor()
+
+    if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
+        locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+        if locked == 0:
+            result = cursor.execute("SELECT Users FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+            if result:
+                users = result[0]
+                user_list = users.split(",")
+
+                if uuid not in user_list:
+                    uuid = "," + uuid
+                    cursor.execute(
+                        "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
+                        [uuid, room_number])
+                    conn.commit()
+                emit("to_room", {'roomNumber': room_number})
+        else:
+            emit("error_message", {'message': 'Der Raum ist gesperrt'})
     else:
-        return False  # User should not be able to join
+        emit("error_message", {'message': 'Der Raum existiert nicht'})
+    conn.close()
 
 
 if __name__ == '__main__':

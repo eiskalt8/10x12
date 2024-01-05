@@ -31,36 +31,6 @@ function get_name() {
     }
 }
 
-//join existing room
-
-
-function check_room() {
-    const room = document.getElementById("room_id").value;
-
-    fetch('/check_room', {
-        method: 'POST',
-        body: new URLSearchParams({'room': room}),
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if (data.error) {
-                //TODO change to Text on page
-                alert("Ungültige Raum-ID. Bitte gib eine gültige ein.");
-            } else {
-                // forwarding
-                window.location.href = "game.html?room=" + room;
-            }
-        })
-        .catch(error => {
-            //TODO change to Text on page
-            alert("Ungültige Raum-ID oder Verbindungsproblem.");
-        });
-    // safe room-ID
-    localStorage.setItem("room", room);
-}
-
 
 //Darkmode
 if (localStorage.getItem("darkMode") === true) {
