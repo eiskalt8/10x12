@@ -99,6 +99,31 @@
     </table>
 </div>
 
+<script>
+    // generate table
+    const tableHead = document.querySelector('#playerTable thead');
+
+    let headHtml = '<th scope="col">Zahlen</th>';
+    for (let col = 1; col <= 10; col++) {
+        headHtml += '<th scope="col">' + col + '</th>';
+    }
+    headHtml += '<th scope="col">Zahlen</th>';
+
+    tableHead.innerHTML = headHtml;
+
+    const tableBody = document.querySelector('#playerTable tbody');
+
+    for (let row = 1; row <= 12; row++) {
+        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+        for (let col = 1; col <= 10; col++) {
+            rowHtml += '<td><input class="form-check-input" type="checkbox" id="' + row + '-' + col + '"></td>';
+        }
+
+        rowHtml += '<th scope="row">' + row + '</th></tr>';
+        tableBody.innerHTML += rowHtml;
+    }
+</script>
 
 </body>
 </html>
