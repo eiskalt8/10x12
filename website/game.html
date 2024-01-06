@@ -32,75 +32,66 @@
 
 <nav class="navbar">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">
-            <img alt="Logo" class="d-inline-block align-text-top" height="80" src="Logo_name.png" width="80"></a>
-        <span class="navbar-text" style="font-size:xx-large">
-                10x12
-            </span>
-        <button class="btn btn-outline-info" id="btnSwitch" type="button">Lichtschalter</button>
+        <div class="row align-items-center w-100" style="flex-grow: 1">
+            <div class="col w-100">
+                <a class="navbar-brand" href="">
+                    <img alt="Logo" class="d-inline-block align-text-top" height="80" src="Logo_name.png" width="80">
+                </a>
+            </div>
+            <div class="col w-100 text-center">
+                <span class="navbar-text" style="font-size:xx-large">
+                    10x12
+                </span>
+            </div>
+            <div class="col w-100 text-end">
+                <button class="btn btn-outline-info" id="btnSwitch" type="button">Lichtschalter</button>
+            </div>
+        </div>
     </div>
 </nav>
 
-<div class="container text-center" style="padding-top: 40px; padding-bottom: 20px">
+
+<div class="container-fluid text-center">
     <p><strong id="username"></strong></p>
 </div>
-<div class="container text-center">
-    <table class="table table-striped table-hover table-bordered border-primary">
-        <thead>
-        <tr>
-            <th scope="col">Zahlen</th>
-            <th scope="col">1</th>
-            <th scope="col">2</th>
-            <th scope="col">3</th>
-            <th scope="col">Zahlen</th>
-        </tr>
-        </thead>
-        <tbody class="table-group-divider border-primary">
-        <tr>
-            <th scope="row">1</th>
-            <td>
-                <input class="form-check-input" type="checkbox" id="1-1">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="1-2">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="1-3">
-            </td>
-            <th scope="row">1</th>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>
-                <input class="form-check-input" type="checkbox" id="2-1">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="2-2">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="2-3">
-            </td>
-            <th scope="row">2</th>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>
-                <input class="form-check-input" type="checkbox" id="3-1">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="3-2">
-            </td>
-            <td>
-                <input class="form-check-input" type="checkbox" id="3-3">
-            </td>
-            <th scope="row">3</th>
-        </tr>
-        </tbody>
-    </table>
+<div class="container-fluid text-center">
+    <div class="row">
+        <!-- left side -->
+        <div class="col-sm">
+            <table class="table table-striped table-bordered border-primary" id="Table1left">
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+            <table class="table table-striped table-bordered border-primary" id="Table3left">
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+        </div>
+        <!-- center -->
+        <div class="col-lg-6">
+            <table class="table table-striped table-hover table-bordered border-primary" id="playerTable">
+                <thead>
+                </thead>
+                <tbody class="table-group-divider border-primary">
+                </tbody>
+            </table>
+            <!-- TODO add dices and roll button -->
+        </div>
+        <!-- right side -->
+        <div class="col-sm" style="height: 800px">
+            <table class="table table-striped table-bordered border-primary" id="Table2right">
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+            <table class="table table-striped table-bordered border-primary" id="Table4right">
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
 <script>
-    // generate table
+    // generate big table
     const tableHead = document.querySelector('#playerTable thead');
 
     let headHtml = '<th scope="col">Zahlen</th>';
@@ -123,6 +114,53 @@
         rowHtml += '<th scope="row">' + row + '</th></tr>';
         tableBody.innerHTML += rowHtml;
     }
+
+    // generate other user tables
+    // TODO make request how many Players are in sessions and generate only needed ones
+    const Table1Body = document.querySelector('#Table1left tbody');
+
+    for (let row = 1; row <= 12; row++) {
+        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+        for (let col = 1; col <= 10; col++) {
+            rowHtml += '<td id="' + row + '-' + col + '"></td>';
+        }
+        Table1Body.innerHTML += rowHtml;
+    }
+
+    const Table2Body = document.querySelector('#Table2right tbody');
+
+    for (let row = 1; row <= 12; row++) {
+        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+        for (let col = 1; col <= 10; col++) {
+            rowHtml += '<td id="' + row + '-' + col + '"></td>';
+        }
+        Table2Body.innerHTML += rowHtml;
+    }
+
+    const Table3Body = document.querySelector('#Table3left tbody');
+
+    for (let row = 1; row <= 12; row++) {
+        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+        for (let col = 1; col <= 10; col++) {
+            rowHtml += '<td id="' + row + '-' + col + '"></td>';
+        }
+        Table3Body.innerHTML += rowHtml;
+    }
+
+    const Table4Body = document.querySelector('#Table4right tbody');
+
+    for (let row = 1; row <= 12; row++) {
+        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+        for (let col = 1; col <= 10; col++) {
+            rowHtml += '<td id="' + row + '-' + col + '"></td>';
+        }
+        Table4Body.innerHTML += rowHtml;
+    }
+
 </script>
 
 </body>
