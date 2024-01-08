@@ -20,58 +20,6 @@
     <script crossorigin="anonymous"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script charset="utf-8" type="text/javascript">
-        $(document).ready(function () {
-            const socket = io();
-            socket.on("connect", function () {
-                console.log("connected")
-            });
-
-            socket.on('room_locked', function (data) {
-                const lockmsg = document.getElementById('lockmsg');
-                lockmsg.textContent = data.message;
-                lockmsg.style.display = 'block';
-            });
-        });
-        function rollDice() {
-            const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
-            document.getElementById("würfel").disabled = true;
-            setTimeout(function () {
-                document.getElementById("würfel").disabled = false;
-            }, 2000);
-            let room_number = window.location.pathname
-            room_number = room_number.split('/');
-            console.log(room_number[2]);
-            socket.emit("lock_room", {
-                room_number: room_number
-            });
-
-            diceIds.forEach(diceId => {
-                const diceElement = document.getElementById(diceId);
-                if (!diceElement.classList.contains("locked"))
-                    diceElement.classList.add("rolling");
-                setTimeout(() => {
-                    if (diceElement.classList.contains("rolling")) {
-                        const randomNumber = Math.floor(Math.random() * 6) + 1;
-                        diceElement.classList.remove("rolling");
-                        diceElement.className = `bi bi-dice-${randomNumber} dice`;
-                    }
-
-                }, 500);// Wait in Millisec
-            });
-        }
-
-        function toggleLock(diceId) {
-            const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
-            const diceElement = document.getElementById(diceId);
-
-            if (checkboxElement.checked) {
-                diceElement.classList.add("locked");
-            } else {
-                diceElement.classList.remove("locked");
-            }
-        }
-    </script>
     <style>
         .dice {
             font-size: xxx-large;
@@ -107,6 +55,47 @@
     </style>
 </head>
 <body onload="get_name()">
+<script charset="utf-8" type="text/javascript">
+    const socket = io();
+    socket.on("connect", function () {
+        console.log("connected")
+    });
+
+    socket.on('room_locked', function (data) {
+        const lockmsg = document.getElementById('lockmsg');
+        lockmsg.textContent = data.message;
+        lockmsg.style.display = 'block';
+    });
+
+    function rollDice() {
+        const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
+        document.getElementById("würfel").disabled = true;
+        setTimeout(function () {
+            document.getElementById("würfel").disabled = false;
+        }, 2000);
+        let room_number = window.location.pathname
+        room_number = room_number.split('/');
+        room_number = room_number[2];
+        console.log(room_number);
+        socket.emit("lock_room", {
+            room_number: room_number
+        });
+
+        diceIds.forEach(diceId => {
+            const diceElement = document.getElementById(diceId);
+            if (!diceElement.classList.contains("locked"))
+                diceElement.classList.add("rolling");
+            setTimeout(() => {
+                if (diceElement.classList.contains("rolling")) {
+                    const randomNumber = Math.floor(Math.random() * 6) + 1;
+                    diceElement.classList.remove("rolling");
+                    diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                }
+
+            }, 500);// Wait in Millisec
+        });
+    }
+</script>
 
 <nav class="navbar">
     <div class="container-fluid">
@@ -197,7 +186,7 @@
             <div class="container text-center">
                 <div class="d-flex justify-content-center">
                     <div class="container text-center alert alert-danger" id="lockmsg" role="alert"
-     style="display: none; max-width: fit-content"></div>
+                         style="display: none; max-width: fit-content"></div>
                     <div class="alert alert-info alert-dismissible fade show" role="alert"
                          style="max-width: fit-content;">
                         <strong>Achtung!</strong> Nach dem ersten Würfeln ist der Raum gesperrt, und keine weiteren

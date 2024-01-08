@@ -31,6 +31,16 @@ function get_name() {
     }
 }
 
+function toggleLock(diceId) {
+    const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
+    const diceElement = document.getElementById(diceId);
+
+    if (checkboxElement.checked) {
+        diceElement.classList.add("locked");
+    } else {
+        diceElement.classList.remove("locked");
+    }
+}
 
 //Darkmode
 if (localStorage.getItem("darkMode") === true) {
