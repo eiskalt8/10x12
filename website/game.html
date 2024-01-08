@@ -26,15 +26,25 @@
             socket.on("connect", function () {
                 console.log("connected")
             });
-        });
 
+            socket.on('room_locked', function (data) {
+                const lockmsg = document.getElementById('lockmsg');
+                lockmsg.textContent = data.message;
+                lockmsg.style.display = 'block';
+            });
+        });
         function rollDice() {
-            // Array mit Würfel-IDs
             const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
             document.getElementById("würfel").disabled = true;
             setTimeout(function () {
                 document.getElementById("würfel").disabled = false;
             }, 2000);
+            let room_number = window.location.pathname
+            room_number = room_number.split('/');
+            console.log(room_number[2]);
+            socket.emit("lock_room", {
+                room_number: room_number
+            });
 
             diceIds.forEach(diceId => {
                 const diceElement = document.getElementById(diceId);
@@ -42,12 +52,12 @@
                     diceElement.classList.add("rolling");
                 setTimeout(() => {
                     if (diceElement.classList.contains("rolling")) {
-                        const randomNumber = Math.floor(Math.random() * 6) + 1; // Zufällige Zahl von 1 bis 6
+                        const randomNumber = Math.floor(Math.random() * 6) + 1;
                         diceElement.classList.remove("rolling");
                         diceElement.className = `bi bi-dice-${randomNumber} dice`;
                     }
 
-                }, 500);// Wartezeit in Millisekunden
+                }, 500);// Wait in Millisec
             });
         }
 
@@ -143,7 +153,6 @@
                 <tbody class="table-group-divider border-primary">
                 </tbody>
             </table>
-            <!-- TODO add dices and roll button -->
             <div class="container text-center">
                 <div class="d-flex justify-content-center align-items-center">
                     <i class="bi bi-dice-1 dice" id="dice1"></i>
@@ -187,6 +196,8 @@
             </div>
             <div class="container text-center">
                 <div class="d-flex justify-content-center">
+                    <div class="container text-center alert alert-danger" id="lockmsg" role="alert"
+     style="display: none; max-width: fit-content"></div>
                     <div class="alert alert-info alert-dismissible fade show" role="alert"
                          style="max-width: fit-content;">
                         <strong>Achtung!</strong> Nach dem ersten Würfeln ist der Raum gesperrt, und keine weiteren

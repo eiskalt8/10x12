@@ -27,8 +27,8 @@
 
             // forwarding to game.html/room_number
             socket.on("to_room", function (data) {
-                const roomNumber = data.roomNumber;
-                window.location.href = `/game/${roomNumber}`;
+                const room_number = data.room_number;
+                window.location.href = `/game/${room_number}`;
             });
 
             socket.on('error_message', function (data) {
@@ -50,7 +50,8 @@
                 event.preventDefault();
                 document.getElementById("join-button").disabled = true;
                 setTimeout(function () {
-                document.getElementById("join-button").disabled = false;}, 2000);
+                    document.getElementById("join-button").disabled = false;
+                }, 2000);
 
                 //sends join_room event room_id and uuid
                 socket.emit("join_room", {
@@ -103,13 +104,14 @@
                 </label>
             </div>
             <div class="col text-start" style="padding-left: 6px;">
-                <button class="btn btn-primary mb-3" form="join_room" type="submit" id="join-button">Beitreten</button>
+                <button class="btn btn-primary mb-3" form="join_room" id="join-button" type="submit">Beitreten</button>
             </div>
         </div>
     </form>
 </div>
 
-<div class="container text-center alert alert-danger" role="alert" style="display: none; max-width: fit-content"></div>
+<div class="container text-center alert alert-danger" id="error-message" role="alert"
+     style="display: none; max-width: fit-content"></div>
 
 </body>
 </html>

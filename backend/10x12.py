@@ -27,9 +27,9 @@ def mode():
     return render_template('mode.html')
 
 
-@app.route('/game/<int:roomNumber>')
-def game(roomNumber):
-    return render_template('game.html', roomNumber=roomNumber)
+@app.route('/game/<int:room_number>')
+def game(room_number):
+    return render_template('game.html', room_number=room_number)
 
 
 # TODO check if possible to combine these (until skript.js) in one static folder or something
@@ -71,7 +71,7 @@ def save_name(data):
 def create_room(data):
     uuid = data['uuid']
 
-    # create roomNumber (6-digits)
+    # create room_number (6-digits)
     room_number = random.randrange(100000, 1000000)
 
     conn = connect_to_db()
@@ -87,7 +87,7 @@ def create_room(data):
     conn.commit()
 
     # Socket-Event to Client for forwarding
-    emit("to_room", {'roomNumber': room_number})
+    emit("to_room", {'room_number': room_number})
 
     conn.close()
 
@@ -115,14 +115,30 @@ def check_room(data):
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuid, room_number])
                     conn.commit()
-                    emit("to_room", {'roomNumber': room_number})
+                    emit("to_room", {'room_number': room_number})
                 else:
                     emit("error_message", {'message': 'Der Raum ist gesperrt'})
                     return
             else:
-                emit("to_room", {'roomNumber': room_number})
+                emit("to_room", {'room_number': room_number})
     else:
         emit("error_message", {'message': 'Der Raum existiert nicht'})
+    conn.close()
+
+
+@socketio.on('lock_room')
+def lock_room(data):
+    room_number = data['room_number']
+
+    conn = connect_to_db()
+    cursor = conn.cursor()
+
+    if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
+        locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+        if locked[0] == 0:
+            cursor.execute("UPDATE Sessions SET locked = 1 WHERE SessionID = ?", (room_number,))
+            conn.commit()
+            emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'})
     conn.close()
 
 
