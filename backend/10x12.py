@@ -136,7 +136,7 @@ def lock_room(data):
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
         locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
         if locked[0] == 0:
-            cursor.execute("UPDATE Sessions SET locked = 1 WHERE SessionID = ?", (room_number,))
+            cursor.execute("UPDATE Sessions SET locked = 1, last_used = DATE('now') WHERE SessionID = ?", (room_number,))
             conn.commit()
             emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'})
     conn.close()

@@ -63,6 +63,7 @@
 
     socket.on('room_locked', function (data) {
         const locktext = document.getElementById('lockmsg-text');
+        console.log(data.message);
         locktext.textContent = data.message;
         const lockmsg = document.getElementById('lockmsg');
         lockmsg.style.display = 'block';
