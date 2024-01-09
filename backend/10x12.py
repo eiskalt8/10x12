@@ -1,5 +1,5 @@
-import sqlite3
 import random
+import sqlite3
 
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit
@@ -104,18 +104,23 @@ def check_room(data):
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
         result = cursor.execute("SELECT Users FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
         if result:
-            users = result[0]
+            users = result[0]  # result is tupel (uuids,)
             user_list = users.split(",")
 
             if uuid not in user_list:
                 locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
                 if locked[0] == 0:  # 0 not locked 1 locked
-                    uuid = "," + uuid
+                    uuids = "," + uuid  # add user uuid to uuid list
                     cursor.execute(
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
-                        [uuid, room_number])
+                        [uuids, room_number])
                     conn.commit()
                     emit("to_room", {'room_number': room_number})
+
+                    # TODO create numplayers and userlist
+                    numplayers = 4
+                    user_list = ["Ben, Kevin, Horst, Mike"]
+                    emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list})
                 else:
                     emit("error_message", {'message': 'Der Raum ist gesperrt'})
                     return
@@ -136,7 +141,8 @@ def lock_room(data):
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
         locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
         if locked[0] == 0:
-            cursor.execute("UPDATE Sessions SET locked = 1, last_used = DATE('now') WHERE SessionID = ?", (room_number,))
+            cursor.execute("UPDATE Sessions SET locked = 1, last_used = DATE('now') WHERE SessionID = ?",
+                           (room_number,))
             conn.commit()
             emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'})
     conn.close()

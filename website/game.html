@@ -20,6 +20,9 @@
     <script crossorigin="anonymous"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const socket = io();
+    </script>
     <style>
         .dice {
             font-size: xxx-large;
@@ -56,14 +59,12 @@
 </head>
 <body onload="get_name()">
 <script charset="utf-8" type="text/javascript">
-    const socket = io();
     socket.on("connect", function () {
         console.log("connected")
     });
 
     socket.on('room_locked', function (data) {
         const locktext = document.getElementById('lockmsg-text');
-        console.log(data.message);
         locktext.textContent = data.message;
         const lockmsg = document.getElementById('lockmsg');
         lockmsg.style.display = 'block';
@@ -124,13 +125,18 @@
     <div class="row">
         <!-- left side -->
         <div class="col-sm">
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1left">
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1">
                 <caption class="text-center" id="player1"></caption>
                 <tbody class="border-primary">
                 </tbody>
             </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3left">
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3">
                 <caption class="text-center" id="player3"></caption>
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5">
+                <caption class="text-center" id="player5"></caption>
                 <tbody class="border-primary">
                 </tbody>
             </table>
@@ -203,13 +209,18 @@
         </div>
         <!-- right side -->
         <div class="col-sm">
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2right">
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2">
                 <caption class="text-center" id="player2"></caption>
                 <tbody class="border-primary">
                 </tbody>
             </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4right">
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4">
                 <caption class="text-center" id="player4"></caption>
+                <tbody class="border-primary">
+                </tbody>
+            </table>
+            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6">
+                <caption class="text-center" id="player6"></caption>
                 <tbody class="border-primary">
                 </tbody>
             </table>
@@ -243,51 +254,30 @@
 
     // generate other user tables
     // TODO make request how many Players are in sessions and generate only needed ones
-    const Table1Body = document.querySelector('#Table1left tbody');
+    socket.on('update_amount_tables', function (data) {
+        let numPlayers = data.numPlayers;
+        generatePlayerTables(numPlayers);
+        let userList = data.users;
+        console.log(numPlayers);
+        console.log(userList);
+    });
 
-    for (let row = 1; row <= 12; row++) {
-        let rowHtml = '<tr><th scope="row">' + row + '</th>';
+    function generatePlayerTables(numPlayers) {
+        for (let i = 1; i <= numPlayers; i++) {
+            const tableBody = document.querySelector(`#Table${i} tbody`);
 
-        for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td id="' + row + '-' + col + '"></td>';
+            for (let row = 1; row <= 12; row++) {
+                let rowHtml = `<tr><th scope="row">${row}</th>`;
+
+                for (let col = 1; col <= 10; col++) {
+                    rowHtml += `<td id="${row}-${col}"></td>`;
+                }
+
+                rowHtml += `<th scope="row">${row}</th></tr>`;
+                tableBody.innerHTML += rowHtml;
+            }
         }
-        Table1Body.innerHTML += rowHtml;
     }
-
-    const Table2Body = document.querySelector('#Table2right tbody');
-
-    for (let row = 1; row <= 12; row++) {
-        let rowHtml = '<tr><th scope="row">' + row + '</th>';
-
-        for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td id="' + row + '-' + col + '"></td>';
-        }
-        Table2Body.innerHTML += rowHtml;
-    }
-
-    const Table3Body = document.querySelector('#Table3left tbody');
-
-    for (let row = 1; row <= 12; row++) {
-        let rowHtml = '<tr><th scope="row">' + row + '</th>';
-
-        for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td id="' + row + '-' + col + '"></td>';
-        }
-        Table3Body.innerHTML += rowHtml;
-    }
-
-    const Table4Body = document.querySelector('#Table4right tbody');
-
-    for (let row = 1; row <= 12; row++) {
-        let rowHtml = '<tr><th scope="row">' + row + '</th>';
-
-        for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td id="' + row + '-' + col + '"></td>';
-        }
-        Table4Body.innerHTML += rowHtml;
-    }
-
 </script>
-
 </body>
 </html>
