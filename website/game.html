@@ -62,8 +62,9 @@
     });
 
     socket.on('room_locked', function (data) {
+        const locktext = document.getElementById('lockmsg-text');
+        locktext.textContent = data.message;
         const lockmsg = document.getElementById('lockmsg');
-        lockmsg.textContent = data.message;
         lockmsg.style.display = 'block';
     });
 
@@ -184,9 +185,9 @@
                 </div>
             </div>
             <div class="container text-center">
-                <div class="container text-center alert alert-danger alert-dismissible" role="alert"
+                <div class="container text-center alert alert-danger alert-dismissible" id="lockmsg" role="alert"
                      style="display: none; max-width: fit-content">
-                    <div id="lockmsg"></div>
+                    <div id="lockmsg-text"></div>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
                 </div>
                 <div class="d-flex justify-content-center">
