@@ -2,10 +2,10 @@ import random
 import sqlite3
 
 from flask import Flask, render_template, send_from_directory
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__, template_folder='../website/')
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='eventlet', ping_timeout=300)  # timeout from sockets in sec
 
 
 def connect_to_db():
@@ -85,6 +85,7 @@ def create_room(data):
     cursor.execute("INSERT INTO Sessions (SessionID, Users, last_used) VALUES (?, ?, DATE('now'))",
                    (room_number, uuid))
     conn.commit()
+    join_room(room_number)  # join websocket room which is SessionID
 
     # Socket-Event to Client for forwarding
     emit("to_room", {'room_number': room_number})
@@ -115,12 +116,15 @@ def check_room(data):
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuids, room_number])
                     conn.commit()
+                    join_room(room_number)  # join websocket room which is SessionID
                     emit("to_room", {'room_number': room_number})
 
                     # TODO create numplayers and userlist
                     numplayers = 4
                     user_list = ["Ben, Kevin, Horst, Mike"]
-                    emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list})
+                    emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list}, broadcast=True,
+                         include_self=True, to=room_number)
+
                 else:
                     emit("error_message", {'message': 'Der Raum ist gesperrt'})
                     return
@@ -144,7 +148,8 @@ def lock_room(data):
             cursor.execute("UPDATE Sessions SET locked = 1, last_used = DATE('now') WHERE SessionID = ?",
                            (room_number,))
             conn.commit()
-            emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'})
+            emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'},
+                 broadcast=True, include_self=True, to=room_number)
     conn.close()
 
 

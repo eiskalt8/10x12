@@ -72,26 +72,25 @@
 
     function rollDice() {
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
-        document.getElementById("würfel").disabled = true;
+        document.getElementById('würfel').disabled = true;
         setTimeout(function () {
-            document.getElementById("würfel").disabled = false;
+            document.getElementById('würfel').disabled = false;
         }, 2000);
         let room_number = window.location.pathname
         room_number = room_number.split('/');
         room_number = room_number[2];
-        console.log(room_number);
         socket.emit("lock_room", {
             room_number: room_number
         });
 
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
-            if (!diceElement.classList.contains("locked"))
-                diceElement.classList.add("rolling");
+            if (!diceElement.classList.contains('locked'))
+                diceElement.classList.add('rolling');
             setTimeout(() => {
-                if (diceElement.classList.contains("rolling")) {
+                if (diceElement.classList.contains('rolling')) {
                     const randomNumber = Math.floor(Math.random() * 6) + 1;
-                    diceElement.classList.remove("rolling");
+                    diceElement.classList.remove('rolling');
                     diceElement.className = `bi bi-dice-${randomNumber} dice`;
                 }
 
@@ -257,7 +256,7 @@
     socket.on('update_amount_tables', function (data) {
         let numPlayers = data.numPlayers;
         generatePlayerTables(numPlayers);
-        let userList = data.users;
+        let userList = data.users.split(", ");
         console.log(numPlayers);
         console.log(userList);
     });
