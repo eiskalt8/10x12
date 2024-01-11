@@ -115,9 +115,7 @@ def check_room(data):
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuids, room_number])
                     conn.commit()
-                    print("before: " + request.sid)
                     join_room(room_number)  # join websocket room which is SessionID
-                    print("after: " + request.sid)
                     emit("to_room", {'room_number': room_number})
 
                     # TODO create numplayers and userlist
@@ -154,15 +152,11 @@ def lock_room(data):
     conn.close()
 
 
-@socketio.on('get_current_room')
-def get_current_room():
-    # `rooms()` gibt die Räume des aktuellen Sockets zurück
-    current_rooms = list(rooms(request.sid))
-
-    # Nehme an, dass der aktuelle Raum das erste Element in der Liste ist
-    current_room = current_rooms[0] if current_rooms else None
-
-    emit('current_room', {'room': current_room})
+@socketio.on('join_webroom')
+def handle_join_room(data):
+    room_number = data['room_number']
+    join_room(room_number)
+    emit('room_joined', {'room': room_number}, room=room_number)
 
 
 if __name__ == '__main__':

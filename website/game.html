@@ -59,13 +59,17 @@
 </head>
 <body onload="get_name()">
 <script charset="utf-8" type="text/javascript">
-    socket.on("connect", function () {
+    socket.on('connect', function () {
         console.log("connected")
-        console.log(socket.id)
-        getCurrentRoom()
+        let room_number = window.location.pathname
+        room_number = room_number.split('/');
+        room_number = room_number[2];
+        socket.emit('join_webroom', {
+            room_number: room_number
+        });
     });
 
-    socket.on("disconnect", function () {
+    socket.on('disconnect', function () {
         console.log("disconnected")
     });
 
@@ -74,6 +78,11 @@
         locktext.textContent = data.message;
         const lockmsg = document.getElementById('lockmsg');
         lockmsg.style.display = 'block';
+    });
+
+    socket.on('room_joined', function (data) {
+       const room_number = data['room']
+       console.log("hopefully in: " + room_number)
     });
 
     function rollDice() {
@@ -85,7 +94,7 @@
         let room_number = window.location.pathname
         room_number = room_number.split('/');
         room_number = room_number[2];
-        socket.emit("lock_room", {
+        socket.emit('lock_room', {
             room_number: room_number
         });
 
@@ -101,12 +110,6 @@
                 }
 
             }, 500);// Wait in Millisec
-        });
-    }
-
-    function getCurrentRoom() {
-        socket.emit('get_current_room', {}, function (response) {
-            console.log('Aktueller WebSocket-Raum:', response.room);
         });
     }
 </script>
@@ -205,6 +208,7 @@
             <div class="container text-center">
                 <div class="container text-center alert alert-danger alert-dismissible" id="lockmsg" role="alert"
                      style="display: none; max-width: fit-content">
+                    <!-- TODO div vanished after closing -->
                     <div id="lockmsg-text"></div>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
                 </div>
