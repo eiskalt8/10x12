@@ -2,10 +2,10 @@ import random
 import sqlite3
 
 from flask import Flask, render_template, send_from_directory
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
 
 app = Flask(__name__, template_folder='../website/')
-socketio = SocketIO(app, async_mode='eventlet', ping_timeout=300)  # timeout from sockets in sec
+socketio = SocketIO(app, async_mode='eventlet', ping_interval=20, ping_timeout=60)  # timeout from sockets in sec
 
 
 def connect_to_db():
@@ -86,7 +86,6 @@ def create_room(data):
                    (room_number, uuid))
     conn.commit()
     join_room(room_number)  # join websocket room which is SessionID
-
     # Socket-Event to Client for forwarding
     emit("to_room", {'room_number': room_number})
 
@@ -116,7 +115,9 @@ def check_room(data):
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuids, room_number])
                     conn.commit()
+                    print("before: " + request.sid)
                     join_room(room_number)  # join websocket room which is SessionID
+                    print("after: " + request.sid)
                     emit("to_room", {'room_number': room_number})
 
                     # TODO create numplayers and userlist
@@ -151,6 +152,17 @@ def lock_room(data):
             emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'},
                  broadcast=True, include_self=True, to=room_number)
     conn.close()
+
+
+@socketio.on('get_current_room')
+def get_current_room():
+    # `rooms()` gibt die Räume des aktuellen Sockets zurück
+    current_rooms = list(rooms(request.sid))
+
+    # Nehme an, dass der aktuelle Raum das erste Element in der Liste ist
+    current_room = current_rooms[0] if current_rooms else None
+
+    emit('current_room', {'room': current_room})
 
 
 if __name__ == '__main__':
