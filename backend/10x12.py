@@ -1,5 +1,6 @@
 import random
 import sqlite3
+import time
 
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
@@ -118,18 +119,17 @@ def check_room(data):
                         join_room(room_number)
                         emit("to_room", {'room_number': room_number})
 
-                        # TODO create numplayers and userlist
-                        numplayers = len(user_list)
-
+                        # TODO create namelist
+                        user_list.append(uuid)
                         name_list = []
+                        time.sleep(5)  # TODO find right way that user with request gets that emit too
                         for user_uuid in user_list:
                             result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
                                                     (user_uuid,)).fetchone()
                             if result:
                                 name_list.append(result[0])
 
-                        # name_list = [",".join(name_list)]  # try if name_list in console is broken
-                        emit("update_amount_tables", {'numPlayers': numplayers, 'names': name_list}, broadcast=True,
+                        emit("update_amount_tables", {'names': name_list}, broadcast=True,
                              include_self=True, to=room_number)
                     else:
                         emit("error_message", {'message': 'Der Raum ist bereits voll'})

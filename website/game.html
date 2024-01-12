@@ -269,19 +269,19 @@
     }
 
     // generate other user tables
-    // TODO make request how many Players are in sessions and generate only needed ones
+    // TODO make request which Players are in sessions and generate only needed ones and prevent double Tables
     socket.on('update_amount_tables', function (data) {
-        let numPlayers = data.numPlayers;
-        generatePlayerTables(numPlayers);
-        let nameList = data.names.split(", ");
-        console.log(numPlayers);
+        let nameList = data.names;
         console.log(nameList);
+        let numPlayers = nameList.length - 1 // because of own Player Table already exists
+        generatePlayerTables(numPlayers);
     });
 
     function generatePlayerTables(numPlayers) {
         for (let i = 1; i <= numPlayers; i++) {
             const tableBody = document.querySelector(`#Table${i} tbody`);
-
+            const tableCaption = document.querySelector(`#Table${i} caption`);
+            tableCaption.innerHTML = 'Player: ' + i;
             for (let row = 1; row <= 12; row++) {
                 let rowHtml = `<tr><th scope="row">${row}</th>`;
 
