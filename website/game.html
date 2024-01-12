@@ -273,9 +273,9 @@
     socket.on('update_amount_tables', function (data) {
         let numPlayers = data.numPlayers;
         generatePlayerTables(numPlayers);
-        let userList = data.users.split(", ");
+        let nameList = data.names.split(", ");
         console.log(numPlayers);
-        console.log(userList);
+        console.log(nameList);
     });
 
     function generatePlayerTables(numPlayers) {

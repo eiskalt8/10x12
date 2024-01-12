@@ -120,12 +120,33 @@ def check_room(data):
                         emit("to_room", {'room_number': room_number})
 
                         # TODO create numplayers and userlist
-                        numplayers = 4
-                        user_list = ["Ben, Kevin, Horst, Mike"]
-                        emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list}, broadcast=True,
+                        numplayers = len(user_list)-1  # because of own player table
+
+                        conn = connect_to_db()
+                        cursor = conn.cursor()
+
+                        # Erstelle eine SQL-Abfrage, um die Namen für die gegebenen UUIDs abzurufen
+                        query = "SELECT UserName FROM Users WHERE UserID IN ({})".format(", ".join(["?"] * numplayers))
+
+                        # Führe die Abfrage aus
+                        result = cursor.execute(query, uuids).fetchall()
+
+                        # Schließe die Verbindung zur Datenbank
+                        conn.close()
+
+                        # Extrahiere die Namen aus dem Ergebnis
+                        name_list = [row[0] for row in result]
+
+                        # Konvertiere die Liste der Namen in das gewünschte Format
+                        name_list = [", ".join(name_list)]
+
+                        # name_list = ["Ben, Kevin, Horst, Mike"]
+                        emit("update_amount_tables", {'numPlayers': numplayers, 'names': name_list}, broadcast=True,
                              include_self=True, to=room_number)
+                    else:
+                        emit("error_message", {'message': 'Der Raum ist bereits voll'})
                 else:
-                    emit("error_message", {'message': 'Der Raum ist gesperrt oder bereits voll'})
+                    emit("error_message", {'message': 'Der Raum ist gesperrt'})
                     return
             else:
                 join_room(room_number)
