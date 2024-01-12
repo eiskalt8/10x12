@@ -5,7 +5,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
 
 app = Flask(__name__, template_folder='../website/')
-socketio = SocketIO(app, async_mode='eventlet', ping_interval=20, ping_timeout=60)  # timeout from sockets in sec
+socketio = SocketIO(app, async_mode='eventlet', ping_interval=20)
 
 
 def connect_to_db():
@@ -85,7 +85,7 @@ def create_room(data):
     cursor.execute("INSERT INTO Sessions (SessionID, Users, last_used) VALUES (?, ?, DATE('now'))",
                    (room_number, uuid))
     conn.commit()
-    join_room(room_number)  # join websocket room which is SessionID
+    join_room(room_number)  # join websocket room which is room_number / SessionID
     # Socket-Event to Client for forwarding
     emit("to_room", {'room_number': room_number})
 
@@ -115,7 +115,7 @@ def check_room(data):
                         "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
                         [uuids, room_number])
                     conn.commit()
-                    join_room(room_number)  # join websocket room which is SessionID
+                    join_room(room_number)
                     emit("to_room", {'room_number': room_number})
 
                     # TODO create numplayers and userlist
@@ -128,6 +128,7 @@ def check_room(data):
                     emit("error_message", {'message': 'Der Raum ist gesperrt'})
                     return
             else:
+                join_room(room_number)
                 emit("to_room", {'room_number': room_number})
     else:
         emit("error_message", {'message': 'Der Raum existiert nicht'})
