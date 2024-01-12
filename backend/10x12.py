@@ -111,30 +111,24 @@ def check_room(data):
                 locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
                 if locked[0] == 0:  # 0 not locked 1 locked
                     if len(user_list) < 7:
-                        uuids = "," + uuid  # add user uuid to uuid list
                         cursor.execute(
                             "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
-                            [uuids, room_number])
+                            ("," + uuid, room_number))
                         conn.commit()
                         join_room(room_number)
                         emit("to_room", {'room_number': room_number})
 
                         # TODO create numplayers and userlist
-                        numplayers = len(user_list)-1  # because of own player table
+                        numplayers = len(user_list)
 
-                        placeholders = ",".join(["?"] * numplayers)
-                        query = f"SELECT UserName FROM Users WHERE UserID IN ({placeholders})"
+                        name_list = []
+                        for user_uuid in user_list:
+                            result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
+                                                    (user_uuid,)).fetchone()
+                            if result:
+                                name_list.append(result[0])
 
-                        # Führe die Abfrage aus
-                        result = cursor.execute(query, user_list).fetchall()
-
-                        # Extrahiere die Namen aus dem Ergebnis
-                        name_list = [row[0] for row in result]
-
-                        # Konvertiere die Liste der Namen in das gewünschte Format
-                        name_list = [", ".join(name_list)]
-
-                        # name_list = ["Ben, Kevin, Horst, Mike"]
+                        # name_list = [",".join(name_list)]  # try if name_list in console is broken
                         emit("update_amount_tables", {'numPlayers': numplayers, 'names': name_list}, broadcast=True,
                              include_self=True, to=room_number)
                     else:
