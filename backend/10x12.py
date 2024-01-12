@@ -122,17 +122,11 @@ def check_room(data):
                         # TODO create numplayers and userlist
                         numplayers = len(user_list)-1  # because of own player table
 
-                        conn = connect_to_db()
-                        cursor = conn.cursor()
-
-                        # Erstelle eine SQL-Abfrage, um die Namen für die gegebenen UUIDs abzurufen
-                        query = "SELECT UserName FROM Users WHERE UserID IN ({})".format(", ".join(["?"] * numplayers))
+                        placeholders = ",".join(["?"] * numplayers)
+                        query = f"SELECT UserName FROM Users WHERE UserID IN ({placeholders})"
 
                         # Führe die Abfrage aus
-                        result = cursor.execute(query, uuids).fetchall()
-
-                        # Schließe die Verbindung zur Datenbank
-                        conn.close()
+                        result = cursor.execute(query, user_list).fetchall()
 
                         # Extrahiere die Namen aus dem Ergebnis
                         name_list = [row[0] for row in result]
