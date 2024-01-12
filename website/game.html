@@ -74,29 +74,30 @@
     });
 
     socket.on('room_locked', function (data) {
-        const locktext = document.getElementById('lockmsg-text');
-        locktext.textContent = data.message;
-        const lockmsg = document.getElementById('lockmsg');
-        lockmsg.style.display = 'block';
-    });
-
-    socket.on('room_joined', function (data) {
-       const room_number = data['room']
-       console.log("In Room: " + room_number)
+        if ('message' in data) {
+            const locktext = document.getElementById('lockmsg-text');
+            locktext.textContent = data['message'];
+            const lockmsg = document.getElementById('lockmsg');
+            lockmsg.style.display = 'block';
+        }
+        localStorage.setItem('locked', 'true');
     });
 
     function rollDice() {
+        // need to lock the room?
+        if (localStorage.getItem('locked') == null) {
+            let room_number = window.location.pathname
+            room_number = room_number.split('/');
+            room_number = room_number[2];
+            socket.emit('lock_room', {
+                room_number: room_number
+            });
+        }
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
         document.getElementById('würfel').disabled = true;
         setTimeout(function () {
             document.getElementById('würfel').disabled = false;
         }, 2000);
-        let room_number = window.location.pathname
-        room_number = room_number.split('/');
-        room_number = room_number[2];
-        socket.emit('lock_room', {
-            room_number: room_number
-        });
 
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);

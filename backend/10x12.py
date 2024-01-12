@@ -148,8 +148,11 @@ def lock_room(data):
             cursor.execute("UPDATE Sessions SET locked = 1, last_used = DATE('now') WHERE SessionID = ?",
                            (room_number,))
             conn.commit()
-            emit("room_locked", {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'},
+            emit("room_locked",
+                 {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'},
                  broadcast=True, include_self=True, to=room_number)
+        else:
+            emit("room_locked", {}, broadcast=True, include_self=True, to=room_number)
     conn.close()
 
 
