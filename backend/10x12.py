@@ -110,22 +110,22 @@ def check_room(data):
             if uuid not in user_list:
                 locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
                 if locked[0] == 0:  # 0 not locked 1 locked
-                    uuids = "," + uuid  # add user uuid to uuid list
-                    cursor.execute(
-                        "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
-                        [uuids, room_number])
-                    conn.commit()
-                    join_room(room_number)
-                    emit("to_room", {'room_number': room_number})
+                    if len(user_list) < 7:
+                        uuids = "," + uuid  # add user uuid to uuid list
+                        cursor.execute(
+                            "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
+                            [uuids, room_number])
+                        conn.commit()
+                        join_room(room_number)
+                        emit("to_room", {'room_number': room_number})
 
-                    # TODO create numplayers and userlist
-                    numplayers = 4
-                    user_list = ["Ben, Kevin, Horst, Mike"]
-                    emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list}, broadcast=True,
-                         include_self=True, to=room_number)
-
+                        # TODO create numplayers and userlist
+                        numplayers = 4
+                        user_list = ["Ben, Kevin, Horst, Mike"]
+                        emit("update_amount_tables", {'numPlayers': numplayers, 'users': user_list}, broadcast=True,
+                             include_self=True, to=room_number)
                 else:
-                    emit("error_message", {'message': 'Der Raum ist gesperrt'})
+                    emit("error_message", {'message': 'Der Raum ist gesperrt oder bereits voll'})
                     return
             else:
                 join_room(room_number)
