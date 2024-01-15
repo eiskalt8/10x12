@@ -90,9 +90,6 @@
     function rollDice() {
         // need to lock the room?
         if (localStorage.getItem('locked') == null) {
-            let room_number = window.location.pathname
-            room_number = room_number.split('/');
-            room_number = room_number[2];
             socket.emit('lock_room', {
                 room_number: room_number
             });
@@ -274,23 +271,20 @@
     // generate other user tables
     socket.on('update_amount_tables', function (data) {
         let nameList = data.names;
-        console.log(nameList);
         generatePlayerTables(nameList);
     });
 
 function generatePlayerTables(nameList) {
     const ownuuid_part = uuid.substring(0,8);
-    let names = nameList.filter(user => user[1] !== ownuuid_part);
-
-    console.log(names);
-    let numPlayers = nameList.length;
+    let names = nameList.filter(user => user[1] !== ownuuid_part); // removing own username
+    let numPlayers = names.length;
 
     for (let i = 1; i <= numPlayers; i++) {
         const tableBody = document.querySelector(`#Table${i} tbody`);
 
         if (tableBody.children.length === 0) {
             const tableCaption = document.querySelector(`#Table${i} caption`);
-            tableCaption.innerHTML = names[i - 1][0];
+            tableCaption.innerHTML = names[i - 1][0]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
 
             for (let row = 1; row <= 12; row++) {
                 let rowHtml = `<tr><th scope="row">${row}</th>`;
