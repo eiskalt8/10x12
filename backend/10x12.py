@@ -23,12 +23,14 @@ def create_namelist(user_list):
     conn = connect_to_db()
     cursor = conn.cursor()
     for user_uuid in user_list:
+        uuid_part = user_uuid[:8]
         result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
                                 (user_uuid,)).fetchone()
         if result:
-            name_list.append(result[0])
-        conn.commit()
-        conn.close()
+            name_list.append([result[0], uuid_part])
+
+    conn.commit()
+    conn.close()
     return name_list
 
 
