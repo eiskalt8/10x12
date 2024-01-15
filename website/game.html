@@ -23,10 +23,11 @@
     <script>
         const socket = io();
         let room_number = window.location.pathname
-        room_number = room_number.split('/');
-        room_number = room_number[2];
+        room_number = room_number.split('/')
+        room_number = room_number[2]
         const uuid = localStorage.getItem('uuid')
         const username = localStorage.getItem('username')
+        let room_locked = false
     </script>
     <style>
         .dice {
@@ -84,12 +85,12 @@
             const lockmsg = document.getElementById('lockmsg');
             lockmsg.style.display = 'block';
         }
-        localStorage.setItem('locked', 'true');
+        room_locked = true
     });
 
     function rollDice() {
         // need to lock the room?
-        if (localStorage.getItem('locked') == null) {
+        if (room_locked === false) {
             socket.emit('lock_room', {
                 room_number: room_number
             });
