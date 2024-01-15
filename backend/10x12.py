@@ -157,13 +157,6 @@ def check_room(data):
     conn.close()
 
 
-@socketio.on('join_webroom')
-def handle_join_room(data):
-    room_number = data['room_number']
-    join_room(room_number)
-    emit('room_joined', {'room': room_number}, room=room_number)
-
-
 @socketio.on('lock_room')
 def lock_room(data):
     room_number = data['room_number']
