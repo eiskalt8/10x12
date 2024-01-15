@@ -3,7 +3,7 @@ import sqlite3
 import time
 
 from flask import Flask, render_template, send_from_directory
-from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
+from flask_socketio import SocketIO, emit, join_room
 
 app = Flask(__name__, template_folder='../website/')
 socketio = SocketIO(app, async_mode='eventlet', ping_interval=20)
@@ -16,6 +16,20 @@ def connect_to_db():
     except Exception as e:
         print(e)
     return conn
+
+
+def create_namelist(user_list):
+    name_list = []
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    for user_uuid in user_list:
+        result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
+                                (user_uuid,)).fetchone()
+        if result:
+            name_list.append(result[0])
+        conn.commit()
+        conn.close()
+    return name_list
 
 
 @app.route('/')
@@ -119,15 +133,9 @@ def check_room(data):
                         join_room(room_number)
                         emit("to_room", {'room_number': room_number})
 
-                        # TODO create namelist
                         user_list.append(uuid)
-                        name_list = []
-                        for user_uuid in user_list:
-                            result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
-                                                    (user_uuid,)).fetchone()
-                            if result:
-                                name_list.append(result[0])
 
+                        name_list = create_namelist(user_list)
                         time.sleep(3)  # TODO find right way that user with request gets that emit too
                         emit("update_amount_tables", {'names': name_list}, broadcast=True,
                              include_self=True, to=room_number)
@@ -135,10 +143,15 @@ def check_room(data):
                         emit("error_message", {'message': 'Der Raum ist bereits voll'})
                 else:
                     emit("error_message", {'message': 'Der Raum ist gesperrt'})
-                    return
+                    return  # for skipping join room and emit
             else:
                 join_room(room_number)
                 emit("to_room", {'room_number': room_number})
+
+                name_list = create_namelist(user_list)
+                time.sleep(3)  # TODO find right way that user with request gets that emit too
+                emit("update_amount_tables", {'names': name_list}, broadcast=True,
+                     include_self=True, to=room_number)
     else:
         emit("error_message", {'message': 'Der Raum existiert nicht'})
     conn.close()

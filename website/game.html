@@ -22,6 +22,11 @@
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const socket = io();
+        let room_number = window.location.pathname
+        room_number = room_number.split('/');
+        room_number = room_number[2];
+        const uuid = localStorage.getItem('uuid')
+        const username = localStorage.getItem('username')
     </script>
     <style>
         .dice {
@@ -61,11 +66,14 @@
 <script charset="utf-8" type="text/javascript">
     socket.on('connect', function () {
         console.log("connected")
-        let room_number = window.location.pathname
-        room_number = room_number.split('/');
-        room_number = room_number[2];
+        // join websocket room
         socket.emit('join_webroom', {
             room_number: room_number
+        });
+        // triggering join_room after refresh or if joined manually
+        socket.emit('join_room', {
+            room_number: room_number,
+            uuid: uuid
         });
     });
 
@@ -209,7 +217,6 @@
             <div class="container text-center">
                 <div class="container text-center alert alert-danger alert-dismissible" id="lockmsg" role="alert"
                      style="display: none; max-width: fit-content">
-                    <!-- TODO div vanished after closing -->
                     <div id="lockmsg-text"></div>
                     <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
                 </div>
@@ -269,7 +276,6 @@
     }
 
     // generate other user tables
-    // TODO make request which Players are in sessions and generate only needed ones and prevent double Tables
     socket.on('update_amount_tables', function (data) {
         let nameList = data.names;
         console.log(nameList);
@@ -277,9 +283,7 @@
     });
 
 function generatePlayerTables(nameList) {
-    let names = nameList;
-    const ownUsername = localStorage.getItem('username');
-    names = nameList.filter(name => name !== ownUsername);
+    let names = nameList.filter(name => name !== username);
     console.log(names);
     let numPlayers = nameList.length - 1; // because of own Player Table already exists
 
