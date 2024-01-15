@@ -122,13 +122,13 @@ def check_room(data):
                         # TODO create namelist
                         user_list.append(uuid)
                         name_list = []
-                        time.sleep(5)  # TODO find right way that user with request gets that emit too
                         for user_uuid in user_list:
                             result = cursor.execute("SELECT UserName FROM Users WHERE UserID = ?",
                                                     (user_uuid,)).fetchone()
                             if result:
                                 name_list.append(result[0])
 
+                        time.sleep(3)  # TODO find right way that user with request gets that emit too
                         emit("update_amount_tables", {'names': name_list}, broadcast=True,
                              include_self=True, to=room_number)
                     else:

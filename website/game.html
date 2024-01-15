@@ -273,11 +273,15 @@
     socket.on('update_amount_tables', function (data) {
         let nameList = data.names;
         console.log(nameList);
-        let numPlayers = nameList.length - 1 // because of own Player Table already exists
-        generatePlayerTables(numPlayers);
+        generatePlayerTables(nameList);
     });
 
-    function generatePlayerTables(numPlayers) {
+    function generatePlayerTables(nameList) {
+        let names = nameList;
+        const ownUsername = localStorage.getItem('username');
+        names = nameList.filter(name => name !== ownUsername);
+        console.log(names);
+        let numPlayers = nameList.length - 1 // because of own Player Table already exists
         for (let i = 1; i <= numPlayers; i++) {
             const tableBody = document.querySelector(`#Table${i} tbody`);
             const tableCaption = document.querySelector(`#Table${i} caption`);
