@@ -131,7 +131,10 @@
                 </span>
             </div>
             <div class="col w-100 text-end">
-                <button class="btn btn-outline-info" id="btnSwitch" type="button">Lichtschalter</button>
+                <button type="button" class="btn btn-info">
+                <i class="bi bi-lightbulb"></i>
+                <i class="bi bi-lightbulb-fill"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -208,6 +211,11 @@
                     </button>
                 </div>
             </div>
+            <!-- ONLY FOR DEV -->
+            <div class="container text-center">
+                    Spieler am Zug: <p id="current_player"></p>
+            </div>
+            <!-- ONLY FOR DEV -->
             <div class="container text-center">
                 <div class="container text-center alert alert-danger alert-dismissible" id="lockmsg" role="alert"
                      style="display: none; max-width: fit-content">
