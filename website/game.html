@@ -142,12 +142,18 @@
         <div class="col-sm">
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1">
                 <caption class="text-center" id="player1"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3">
                 <caption class="text-center" id="player3"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5">
                 <caption class="text-center" id="player5"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
         </div>
         <!-- center -->
@@ -221,12 +227,18 @@
         <div class="col-sm">
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2">
                 <caption class="text-center" id="player2"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4">
                 <caption class="text-center" id="player4"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
             <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6">
                 <caption class="text-center" id="player6"></caption>
+                <tbody class="border-primary">
+                </tbody>
             </table>
         </div>
     </div>
@@ -269,16 +281,14 @@ function generatePlayerTables(nameList) {
     const ownUsername = localStorage.getItem('username');
     names = nameList.filter(name => name !== ownUsername);
     console.log(names);
-    let numPlayers = nameList.length - 1 // because of own Player Table already exists
+    let numPlayers = nameList.length - 1; // because of own Player Table already exists
 
     for (let i = 1; i <= numPlayers; i++) {
-        const existingTable = document.querySelector(`#Table${i} tbody`); // check if body exists already
+        const tableBody = document.querySelector(`#Table${i} tbody`);
 
-        if (!existingTable) {
-            const tableBody = document.querySelector(`#Table${i} tbody`);
-            tableBody.classList.add("border-primary");
+        if (tableBody.children.length === 0) {
             const tableCaption = document.querySelector(`#Table${i} caption`);
-            tableCaption.innerHTML = names[-1 + i]; // Array starts at 0, i at 1
+            tableCaption.innerHTML = names[i - 1];
 
             for (let row = 1; row <= 12; row++) {
                 let rowHtml = `<tr><th scope="row">${row}</th>`;
