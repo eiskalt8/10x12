@@ -144,6 +144,13 @@ def check_room(data):
     conn.close()
 
 
+@socketio.on('join_webroom')
+def handle_join_room(data):
+    room_number = data['room_number']
+    join_room(room_number)
+    emit('room_joined', {'room': room_number}, room=room_number)
+
+
 @socketio.on('lock_room')
 def lock_room(data):
     room_number = data['room_number']
@@ -163,13 +170,6 @@ def lock_room(data):
         else:
             emit("room_locked", {}, broadcast=True, include_self=True, to=room_number)
     conn.close()
-
-
-@socketio.on('join_webroom')
-def handle_join_room(data):
-    room_number = data['room_number']
-    join_room(room_number)
-    emit('room_joined', {'room': room_number}, room=room_number)
 
 
 if __name__ == '__main__':
