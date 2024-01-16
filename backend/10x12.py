@@ -35,6 +35,21 @@ def create_namelist(user_list):
     return name_list
 
 
+def get_current_player(room_number):
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    result = cursor.execute("SELECT current_player FROM Sessions WHERE SessionID = ?",
+                            (room_number,)).fetchone()
+    if result:
+        current_player = result[0]
+        current_player = current_player[:8]
+    else:
+        current_player = "nicht gefunden!"
+
+    conn.commit()
+    conn.close()
+    return current_player
+
 @app.route('/')
 def main():
     return render_template('main.html')
@@ -150,16 +165,18 @@ def check_room(data):
                             cursor.execute(
                                 "UPDATE Sessions set Users = Users || ?, last_used = DATE('now'), scores = ? where "
                                 "SessionID = ?",
-                                ("," + uuid, room_number, updated_scores))
+                                ("," + uuid, updated_scores, room_number))
                             conn.commit()
+
                             join_room(room_number)
                             emit("to_room", {'room_number': room_number})
 
                             user_list.append(uuid)
 
                             name_list = create_namelist(user_list)
+                            current_player = get_current_player(room_number)
                             time.sleep(3)  # TODO find right way that user with request gets that emit too
-                            emit("update_amount_tables", {'names': name_list}, broadcast=True,
+                            emit("update_amount_tables", {'names': name_list, 'current_player': current_player}, broadcast=True,
                                  include_self=True, to=room_number)
                     else:
                         emit("error_message", {'message': 'Der Raum ist bereits voll'})
@@ -171,8 +188,9 @@ def check_room(data):
                 emit("to_room", {'room_number': room_number})
 
                 name_list = create_namelist(user_list)
+                current_player = get_current_player(room_number)
                 time.sleep(3)  # TODO find right way that user with request gets that emit too
-                emit("update_amount_tables", {'names': name_list}, broadcast=True,
+                emit("update_amount_tables", {'names': name_list, 'current_player': current_player}, broadcast=True,
                      include_self=True, to=room_number)
     else:
         emit("error_message", {'message': 'Der Raum existiert nicht'})
