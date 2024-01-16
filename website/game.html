@@ -63,7 +63,8 @@
             margin-left: 1.5em;
             margin-bottom: 0.8em;
         }
-        .custom-border {
+        /* TODO */
+        .custom_border {
             border: 3px solid #198754; !important
         }
     </style>
@@ -126,13 +127,11 @@
         setTimeout(function () {
             document.getElementById('next').disabled = false;
         }, 2000);
-        document.getElementById("border_player_table").classList.remove("custom_border")
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,
                 uuid: uuid
             });
-            document.getElementById("border_player_table").classList.add("custom_border")
         }
     }
 </script>
@@ -351,9 +350,7 @@
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
             is_current_player = true
-            document.getElementById("border_player_table").classList.add("custom_border")
         }
-        document.getElementById("border_player_table").classList.remove("custom_border")
         const current_player_p = document.getElementById("current_player");
         current_player_p.innerHTML = currentPlayer
         // TODO change border color from current_player_table
