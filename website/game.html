@@ -26,8 +26,10 @@
         room_number = room_number.split('/')
         room_number = room_number[2]
         const uuid = localStorage.getItem('uuid')
+        const uuid_part = uuid.substring(0, 8)
         const username = localStorage.getItem('username')
         let room_locked = false
+        let is_current_player = false
     </script>
     <style>
         .dice {
@@ -114,6 +116,14 @@
 
             }, 500);// Wait in Millisec
         });
+    }
+    function next() {
+        if (is_current_player === true) {
+            socket.emit('next_player', {
+                room_number: room_number,
+                uuid: uuid
+            });
+        }
     }
 </script>
 
@@ -206,8 +216,10 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
-                    <button class="btn btn-primary" id="würfel" onclick="rollDice()">
+                    <button class="btn btn-primary" id="würfel" onclick="rollDice()" style="margin-right: 0.8em; margin-left: 0.8em">
                         Würfeln
+                    </button><button class="btn btn-primary" id="next" onclick="next()" style="margin-right: 0.8em; margin-left: 0.8em">
+                        Weiter
                     </button>
                 </div>
             </div>
@@ -283,11 +295,13 @@
         generatePlayerTables(nameList);
         let player = data.current_player;
         const current_player = document.getElementById("current_player");
-        if (!(player === "nicht gefunden!")) {
-            current_player.innerHTML = player
+        if (!(player === "nicht gefunden!")) { // if uuid was found
+            current_player.innerHTML = player // TODO change border color from current_player_table
+            if (player === uuid_part) {
+                is_current_player = true // set variable to allow next()
+            }
         } else {
             current_player.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
-            console.log("Aktueller Spieler konnte nicht ermittelt werden")
         }
     });
 
@@ -316,6 +330,14 @@
             }
         }
     }
+
+    socket.on('new_next_player', function (data) {
+        let currentPlayer = data.current_player;
+        if (currentPlayer === uuid_part) {
+            is_current_player = true
+        }
+        // TODO change border color from current_player_table
+    });
 </script>
 </body>
 </html>

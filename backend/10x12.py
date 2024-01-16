@@ -40,7 +40,7 @@ def get_current_player(room_number):
     cursor = conn.cursor()
     result = cursor.execute("SELECT current_player FROM Sessions WHERE SessionID = ?",
                             (room_number,)).fetchone()
-    if result:
+    if result and len(result[0]) == 36:
         current_player = result[0]
         current_player = current_player[:8]
     else:
@@ -49,6 +49,7 @@ def get_current_player(room_number):
     conn.commit()
     conn.close()
     return current_player
+
 
 @app.route('/')
 def main():
@@ -176,8 +177,8 @@ def check_room(data):
                             name_list = create_namelist(user_list)
                             current_player = get_current_player(room_number)
                             time.sleep(3)  # TODO find right way that user with request gets that emit too
-                            emit("update_amount_tables", {'names': name_list, 'current_player': current_player}, broadcast=True,
-                                 include_self=True, to=room_number)
+                            emit("update_amount_tables", {'names': name_list, 'current_player': current_player},
+                                 broadcast=True, include_self=True, to=room_number)
                     else:
                         emit("error_message", {'message': 'Der Raum ist bereits voll'})
                 else:
@@ -215,6 +216,39 @@ def lock_room(data):
                  broadcast=True, include_self=True, to=room_number)
         else:
             emit("room_locked", {}, broadcast=True, include_self=True, to=room_number)
+    conn.close()
+
+
+@socketio.on('next_player')
+def next_player(data):
+    room_number = data['room_number']
+    uuid = data['uuid']
+
+    conn = connect_to_db()
+    cursor = conn.cursor()
+
+    if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
+        result = cursor.execute("Select Users, current_player FROM Sessions WHERE SessionID = ?",
+                                (room_number,)).fetchone()
+        if result:
+            user = result[0]
+            user_list = user.split(",")
+            current_player = result[1]
+            if uuid == current_player:
+                index = user_list.index(current_player)
+                if index + 1 > len(user_list):
+                    next_player_index = 0
+                else:
+                    next_player_index = index + 1
+                next_player_uuid = user_list[next_player_index]
+                cursor.execute("UPDATE Sessions SET last_used = DATE('now'), current_player = ? WHERE SessionID = ?",
+                               (next_player_uuid, room_number))
+                conn.commit()
+                current_player = next_player_uuid[:8]
+                emit("new_next_player", {'current_player': current_player}, broadcast=True,
+                     include_self=True, to=room_number)
+            else:
+                return False  # requester is not current_player and therefore can not end turn
     conn.close()
 
 
