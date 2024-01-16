@@ -1,6 +1,7 @@
 import random
 import sqlite3
 import time
+import json
 
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, join_room
@@ -87,6 +88,12 @@ def save_name(data):
 @socketio.on('create_room')
 def create_room(data):
     uuid = data['uuid']
+    uuid_part = uuid[:8]
+    dices = {"dices": {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6}}
+    dices_default = json.dumps(dices)
+    scores = {
+        uuid_part: {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0}}
+    scores_start = json.dumps(scores)
 
     # create room_number (6-digits)
     room_number = random.randrange(100000, 1000000)
@@ -99,8 +106,10 @@ def create_room(data):
         room_number = random.randrange(100000, 1000000)
 
     # write into database
-    cursor.execute("INSERT INTO Sessions (SessionID, Users, last_used) VALUES (?, ?, DATE('now'))",
-                   (room_number, uuid))
+    cursor.execute(
+        "INSERT INTO Sessions (SessionID, Users, last_used, current_player, dices, scores) VALUES (?, ?, DATE('now'), "
+        "?, ?, ?)",
+        (room_number, uuid, uuid, dices_default, scores_start))
     conn.commit()
     join_room(room_number)  # join websocket room which is room_number / SessionID
     # Socket-Event to Client for forwarding
@@ -121,7 +130,7 @@ def check_room(data):
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
         result = cursor.execute("SELECT Users FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
         if result:
-            users = result[0]  # result is tupel (uuids,)
+            users = result[0]  # result is tuple (uuids,)
             user_list = users.split(",")
 
             if uuid not in user_list:
@@ -181,4 +190,5 @@ def lock_room(data):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8080)
+    # TODO set reloader to False in prod
+    socketio.run(app, host='0.0.0.0', port=8080, log_output=False, use_reloader=True)
