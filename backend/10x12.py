@@ -236,7 +236,7 @@ def next_player(data):
             current_player = result[1]
             if uuid == current_player:
                 index = user_list.index(current_player)
-                if index + 1 > len(user_list):
+                if index == len(user_list) - 1:
                     next_player_index = 0
                 else:
                     next_player_index = index + 1

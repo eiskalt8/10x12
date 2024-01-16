@@ -63,6 +63,9 @@
             margin-left: 1.5em;
             margin-bottom: 0.8em;
         }
+        .custom-border {
+            border: 3px solid #198754; !important
+        }
     </style>
 </head>
 <body onload="get_name()">
@@ -117,12 +120,19 @@
             }, 500);// Wait in Millisec
         });
     }
+
     function next() {
+        document.getElementById('next').disabled = true;
+        setTimeout(function () {
+            document.getElementById('next').disabled = false;
+        }, 2000);
+        document.getElementById("border_player_table").classList.remove("custom_border")
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,
                 uuid: uuid
             });
+            document.getElementById("border_player_table").classList.add("custom_border")
         }
     }
 </script>
@@ -173,13 +183,16 @@
         </div>
         <!-- center -->
         <div class="col-lg-6">
-            <table class="table table-striped table-hover table-bordered border-primary caption-top" id="playerTable">
-                <caption class="text-center"><strong id="username"></strong></caption>
-                <thead>
-                </thead>
-                <tbody class="table-group-divider border-primary">
-                </tbody>
-            </table>
+            <div class="rounded" id="border_player_table">
+                <table class="table table-striped table-hover table-bordered border-primary caption-top"
+                       id="playerTable" style="margin-bottom: 0">
+                    <caption class="text-center"><strong id="username"></strong></caption>
+                    <thead>
+                    </thead>
+                    <tbody class="table-group-divider border-primary">
+                    </tbody>
+                </table>
+            </div>
             <div class="container text-center">
                 <div class="d-flex justify-content-center align-items-center">
                     <i class="bi bi-dice-1 dice" id="dice1"></i>
@@ -216,9 +229,12 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
-                    <button class="btn btn-primary" id="würfel" onclick="rollDice()" style="margin-right: 0.8em; margin-left: 0.8em">
+                    <button class="btn btn-primary" id="würfel" onclick="rollDice()"
+                            style="margin-right: 0.8em; margin-left: 0.8em">
                         Würfeln
-                    </button><button class="btn btn-primary" id="next" onclick="next()" style="margin-right: 0.8em; margin-left: 0.8em">
+                    </button>
+                    <button class="btn btn-primary" id="next" onclick="next()"
+                            style="margin-right: 0.8em; margin-left: 0.8em">
                         Weiter
                     </button>
                 </div>
@@ -294,14 +310,14 @@
         let nameList = data.names;
         generatePlayerTables(nameList);
         let player = data.current_player;
-        const current_player = document.getElementById("current_player");
+        const current_player_p = document.getElementById("current_player");
         if (!(player === "nicht gefunden!")) { // if uuid was found
-            current_player.innerHTML = player // TODO change border color from current_player_table
+            current_player_p.innerHTML = player // TODO change border color from current_player_table
             if (player === uuid_part) {
                 is_current_player = true // set variable to allow next()
             }
         } else {
-            current_player.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
+            current_player_p.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
         }
     });
 
@@ -335,7 +351,11 @@
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
             is_current_player = true
+            document.getElementById("border_player_table").classList.add("custom_border")
         }
+        document.getElementById("border_player_table").classList.remove("custom_border")
+        const current_player_p = document.getElementById("current_player");
+        current_player_p.innerHTML = currentPlayer
         // TODO change border color from current_player_table
     });
 </script>
