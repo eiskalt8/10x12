@@ -123,6 +123,7 @@ def create_room(data):
 def check_room(data):
     room_number = data['room_number']
     uuid = data['uuid']
+    uuid_part = uuid[:8]
 
     conn = connect_to_db()
     cursor = conn.cursor()
@@ -135,21 +136,31 @@ def check_room(data):
 
             if uuid not in user_list:
                 locked = cursor.execute("SELECT locked FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
-                if locked[0] == 0:  # 0 not locked 1 locked
+                if locked[0] == 0:  # 0 not locked, 1 locked
                     if len(user_list) < 7:
-                        cursor.execute(
-                            "UPDATE Sessions set Users = Users || ?, last_used = DATE('now') where SessionID = ?",
-                            ("," + uuid, room_number))
-                        conn.commit()
-                        join_room(room_number)
-                        emit("to_room", {'room_number': room_number})
+                        result = cursor.execute("SELECT scores FROM Sessions WHERE SessionID = ?",
+                                                (room_number,)).fetchone()
+                        if result:
+                            scores = result[0]
+                            scores_dict = json.loads(scores)  # convert JSON in dict
+                            scores_dict[uuid_part] = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0,
+                                                      "9": 0, "10": 0, "11": 0, "12": 0}
+                            updated_scores = json.dumps(scores_dict)  # convert back to JSON
 
-                        user_list.append(uuid)
+                            cursor.execute(
+                                "UPDATE Sessions set Users = Users || ?, last_used = DATE('now'), scores = ? where "
+                                "SessionID = ?",
+                                ("," + uuid, room_number, updated_scores))
+                            conn.commit()
+                            join_room(room_number)
+                            emit("to_room", {'room_number': room_number})
 
-                        name_list = create_namelist(user_list)
-                        time.sleep(3)  # TODO find right way that user with request gets that emit too
-                        emit("update_amount_tables", {'names': name_list}, broadcast=True,
-                             include_self=True, to=room_number)
+                            user_list.append(uuid)
+
+                            name_list = create_namelist(user_list)
+                            time.sleep(3)  # TODO find right way that user with request gets that emit too
+                            emit("update_amount_tables", {'names': name_list}, broadcast=True,
+                                 include_self=True, to=room_number)
                     else:
                         emit("error_message", {'message': 'Der Raum ist bereits voll'})
                 else:
