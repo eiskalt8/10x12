@@ -297,7 +297,7 @@
         let rowHtml = '<tr><th scope="row">' + row + '</th>';
 
         for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td><input class="form-check-input" type="checkbox" id="' + row + '-' + col + '"></td>';
+            rowHtml += '<td><input class="form-check-input" type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
         }
 
         rowHtml += '<th scope="row">' + row + '</th></tr>';
