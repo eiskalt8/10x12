@@ -269,11 +269,11 @@ def player_dices(data):
                                     (room_number,)).fetchone()
             if result:
                 dices = result[0]
-                dices_dict = json.loads(dices)
+                dices_dict = json.loads(dices)['dices_dict']
                 dices_dict.update(new_dices)
 
                 cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
-                               (json.dumps(dices_dict), room_number))
+                               (json.dumps({'dices': dices_dict}), room_number))
                 conn.commit()
 
                 emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=True, to=room_number)

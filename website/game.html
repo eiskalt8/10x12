@@ -104,6 +104,7 @@
             });
         }
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
+        const counter = [1, 2, 3, 4, 5, 6];
         let dices = {};
         let completed = 0
         document.getElementById('würfel').disabled = true;
@@ -111,34 +112,35 @@
             document.getElementById('würfel').disabled = false;
         }, 2000);
 
-        diceIds.forEach(diceId => {
-            const diceElement = document.getElementById(diceId);
-            if (!diceElement.classList.contains('locked')) {
-                diceElement.classList.add('rolling');
-                setTimeout(() => {
-                    if (diceElement.classList.contains('rolling')) {
-                        const randomNumber = Math.floor(Math.random() * 6) + 1;
-                        diceElement.classList.remove('rolling');
-                        diceElement.className = `bi bi-dice-${randomNumber} dice`;
-                        dices[diceId] = randomNumber;
+        counter.forEach(number => {
+            diceIds.forEach(diceId => {
+                const diceElement = document.getElementById(diceId);
+                if (!diceElement.classList.contains('locked')) {
+                    diceElement.classList.add('rolling');
+                    setTimeout(() => {
+                        if (diceElement.classList.contains('rolling')) {
+                            const randomNumber = Math.floor(Math.random() * 6) + 1;
+                            diceElement.classList.remove('rolling');
+                            diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                            dices[number] = randomNumber;
 
-                        completed++
+                            completed++
 
-                        if (completed === diceIds.length) {
-                            console.log(dices)
-                            socket.emit('dices', {
-                                room_number: room_number,
-                                uuid: uuid,
-                                dices: dices
-                            });
+                            if (completed === diceIds.length) {
+                                console.log(dices)
+                                socket.emit('dices', {
+                                    room_number: room_number,
+                                    uuid: uuid,
+                                    dices: dices
+                                });
+                            }
                         }
-                    }
-                }, 500);// Wait in Millisec
-            } else {
-                completed++
-            }
+                    }, 500);// Wait in Millisec
+                } else {
+                    completed++
+                }
+            });
         });
-
     }
 
     function next() {
