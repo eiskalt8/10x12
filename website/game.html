@@ -63,9 +63,11 @@
             margin-left: 1.5em;
             margin-bottom: 0.8em;
         }
+
         /* TODO */
         .custom_border {
-            border: 3px solid #198754; !important
+            border: 3px solid #198754;
+        !important
         }
     </style>
 </head>
@@ -102,6 +104,8 @@
             });
         }
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
+        let dices = {};
+        let completed = 0
         document.getElementById('würfel').disabled = true;
         setTimeout(function () {
             document.getElementById('würfel').disabled = false;
@@ -109,22 +113,30 @@
 
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
-            if (!diceElement.classList.contains('locked'))
+            if (!diceElement.classList.contains('locked')) {
                 diceElement.classList.add('rolling');
-            let dices = {}
-            setTimeout(() => {
-                if (diceElement.classList.contains('rolling')) {
-                    const randomNumber = Math.floor(Math.random() * 6) + 1;
-                    diceElement.classList.remove('rolling');
-                    diceElement.className = `bi bi-dice-${randomNumber} dice`;
-                    dices[diceId] = randomNumber;
-                }
-            }, 500);// Wait in Millisec
-            console.log(dices)
-            socket.emit('dices', {
-               dices: dices
-            });
+                setTimeout(() => {
+                    if (diceElement.classList.contains('rolling')) {
+                        const randomNumber = Math.floor(Math.random() * 6) + 1;
+                        diceElement.classList.remove('rolling');
+                        diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                        dices[diceId] = randomNumber;
+
+                        completed++
+
+                        if (completed === diceIds.length) {
+                            console.log(dices)
+                            socket.emit('dices', {
+                                dices: dices
+                            });
+                        }
+                    }
+                }, 500);// Wait in Millisec
+            } else {
+                completed++
+            }
         });
+
     }
 
     function next() {
@@ -361,14 +373,14 @@
         // TODO change border color from current_player_table
     });
 
-    function activate_buttons () {
+    function activate_buttons() {
         if (is_current_player === true) {
             document.getElementById('würfel').disabled = false;
             document.getElementById('next').disabled = false;
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 6; i++) {
                 document.getElementById(`lock${i}`).disabled = false;
             }
-            }
+        }
     }
 </script>
 </body>
