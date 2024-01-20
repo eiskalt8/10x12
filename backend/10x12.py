@@ -269,7 +269,7 @@ def player_dices(data):
                                     (room_number,)).fetchone()
             if result:
                 dices = result[0]
-                dices_dict = json.loads(dices)['dices_dict']
+                dices_dict = json.loads(dices)['dices']
                 dices_dict.update(new_dices)
 
                 cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
