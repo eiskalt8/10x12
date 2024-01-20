@@ -111,22 +111,25 @@
             const diceElement = document.getElementById(diceId);
             if (!diceElement.classList.contains('locked'))
                 diceElement.classList.add('rolling');
+            let dices = {}
             setTimeout(() => {
                 if (diceElement.classList.contains('rolling')) {
                     const randomNumber = Math.floor(Math.random() * 6) + 1;
                     diceElement.classList.remove('rolling');
                     diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                    dices[diceId] = randomNumber;
                 }
-
             }, 500);// Wait in Millisec
+            console.log(dices)
+            socket.emit('dices', {
+               dices: dices
+            });
         });
     }
 
     function next() {
         document.getElementById('next').disabled = true;
-        setTimeout(function () {
-            document.getElementById('next').disabled = false;
-        }, 2000);
+        document.getElementById('würfel').disabled = true;
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,
@@ -204,27 +207,27 @@
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
                     <div>
                         <input class="form-check-input dicebox" id="lock1" onchange="toggleLock('dice1')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                     <div>
                         <input class="form-check-input dicebox" id="lock2" onchange="toggleLock('dice2')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                     <div>
                         <input class="form-check-input dicebox" id="lock3" onchange="toggleLock('dice3')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                     <div>
                         <input class="form-check-input dicebox" id="lock4" onchange="toggleLock('dice4')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                     <div>
                         <input class="form-check-input dicebox" id="lock5" onchange="toggleLock('dice5')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                     <div>
                         <input class="form-check-input dicebox" id="lock6" onchange="toggleLock('dice6')"
-                               type="checkbox">
+                               type="checkbox" disabled>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
@@ -362,6 +365,9 @@
         if (is_current_player === true) {
             document.getElementById('würfel').disabled = false;
             document.getElementById('next').disabled = false;
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`lock${i}`).disabled = false;
+            }
             }
     }
 </script>
