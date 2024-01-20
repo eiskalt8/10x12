@@ -143,6 +143,9 @@
     function next() {
         document.getElementById('next').disabled = true;
         document.getElementById('würfel').disabled = true;
+        for (let i = 1; i <= 6; i++) {
+                document.getElementById(`lock${i}`).disabled = true;
+        }
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,

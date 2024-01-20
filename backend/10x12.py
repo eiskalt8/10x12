@@ -275,7 +275,7 @@ def player_dices(data):
                 cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
                                (json.dumps({'dices': dices_dict}), room_number))
                 conn.commit()
-
+                # TODO also emit locked status for other players
                 emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=False, to=room_number)
 
     conn.close()
