@@ -229,11 +229,11 @@
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
                     <button class="btn btn-primary" id="würfel" onclick="rollDice()"
-                            style="margin-right: 0.8em; margin-left: 0.8em">
+                            style="margin-right: 0.8em; margin-left: 0.8em" disabled>
                         Würfeln
                     </button>
                     <button class="btn btn-primary" id="next" onclick="next()"
-                            style="margin-right: 0.8em; margin-left: 0.8em">
+                            style="margin-right: 0.8em; margin-left: 0.8em" disabled>
                         Weiter
                     </button>
                 </div>
@@ -314,6 +314,7 @@
             current_player_p.innerHTML = player // TODO change border color from current_player_table
             if (player === uuid_part) {
                 is_current_player = true // set variable to allow next()
+                activate_buttons()
             }
         } else {
             current_player_p.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
@@ -350,11 +351,19 @@
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
             is_current_player = true
+            activate_buttons()
         }
         const current_player_p = document.getElementById("current_player");
         current_player_p.innerHTML = currentPlayer
         // TODO change border color from current_player_table
     });
+
+    function activate_buttons () {
+        if (is_current_player === true) {
+            document.getElementById('würfel').disabled = false;
+            document.getElementById('next').disabled = false;
+            }
+    }
 </script>
 </body>
 </html>
