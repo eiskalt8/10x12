@@ -127,6 +127,8 @@
                         if (completed === diceIds.length) {
                             console.log(dices)
                             socket.emit('dices', {
+                                room_number: room_number,
+                                uuid: uuid,
                                 dices: dices
                             });
                         }
@@ -382,6 +384,23 @@
             }
         }
     }
+
+    socket.on('new_dices', function (data) {
+        const new_dices = data.new_dices;
+        const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
+        const counter = [0, 1, 2, 3, 4, 5];
+
+        counter.forEach(number => {
+            diceIds.forEach(diceId => {
+                const diceElement = document.getElementById(diceId);
+                diceElement.classList.add('rolling');
+                setTimeout(() => {
+                    diceElement.classList.remove('rolling');
+                    diceElement.className = `bi bi-dice-${new_dices[number]} dice`;
+                }, 500);// Wait in Millisec
+            });
+        });
+    });
 </script>
 </body>
 </html>

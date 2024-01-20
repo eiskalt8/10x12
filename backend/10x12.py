@@ -252,6 +252,35 @@ def next_player(data):
     conn.close()
 
 
+@socketio.on('dices')
+def player_dices(data):
+    room_number = data['room_number']
+    uuid = data['uuid']
+    new_dices = data['dices']
+
+    conn = connect_to_db()
+    cursor = conn.cursor()
+
+    if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
+        result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
+                                (room_number,)).fetchone()
+        if result and uuid == result[0]:
+            result = cursor.execute("Select dices FROM Sessions WHERE SessionID = ?",
+                                    (room_number,)).fetchone()
+            if result:
+                dices = result[0]
+                dices_dict = json.loads(dices)
+                dices_dict.update(new_dices)
+
+                cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
+                               (json.dumps(dices_dict), room_number))
+                conn.commit()
+
+                emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=True, to=room_number)
+
+    conn.close()
+
+
 if __name__ == '__main__':
     # TODO set reloader to False in prod
     socketio.run(app, host='0.0.0.0', port=8080, log_output=False, use_reloader=True)
