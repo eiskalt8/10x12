@@ -276,7 +276,7 @@ def player_dices(data):
                                (json.dumps({'dices': dices_dict}), room_number))
                 conn.commit()
 
-                emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=True, to=room_number)
+                emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=False, to=room_number)
 
     conn.close()
 
