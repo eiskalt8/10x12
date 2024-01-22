@@ -263,15 +263,16 @@ def player_dices(data):
     cursor = conn.cursor()
 
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
-        result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
+        result = cursor.execute("Select dices FROM Sessions WHERE SessionID = ?",
                                 (room_number,)).fetchone()
-        if result and uuid == result[0]:
-            result = cursor.execute("Select dices FROM Sessions WHERE SessionID = ?",
-                                    (room_number,)).fetchone()
-            if result:
-                dices = result[0]
-                dices_dict = json.loads(dices)['dices']
-                if new_dices and locked_dices is not False:  # for only get current dices at reload (dices is false)
+        if result:
+            dices = result[0]
+            dices_dict = json.loads(dices)['dices']
+            if new_dices and locked_dices is not False:  # for only get current dices at reload (dices is false)
+                # is current user and allow to change?
+                result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
+                                        (room_number,)).fetchone()
+                if result and uuid == result[0]:
                     dices_dict.update(new_dices)
 
                     cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
@@ -280,8 +281,8 @@ def player_dices(data):
                     # TODO also emit locked status for other players
                     emit('new_dices', {'new_dices': dices_dict, 'locked_dices': locked_dices}, broadcast=True,
                          include_self=False, to=room_number)
-                else:
-                    emit('new_dices', {'new_dices': dices_dict})
+            else:
+                emit('new_dices', {'new_dices': dices_dict})
 
     conn.close()
 
