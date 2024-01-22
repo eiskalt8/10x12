@@ -105,57 +105,59 @@
     });
 
     function rollDice() {
-        // need to lock the room?
-        if (room_locked === false) {
-            socket.emit('lock_room', {
-                room_number: room_number
-            });
-        }
         let dices = {};
         let locked_dices = [];
         let completed = 0
         document.getElementById('würfel').disabled = true;
-        setTimeout(function () {
-            document.getElementById('würfel').disabled = false;
-        }, 2000);
-
-        diceIds.forEach(diceId => {
-            const diceElement = document.getElementById(diceId);
-            if (!diceElement.classList.contains('locked')) {
-                diceElement.classList.add('rolling');
-                setTimeout(() => {
-                    if (diceElement.classList.contains('rolling')) {
-                        const randomNumber = Math.floor(Math.random() * 6) + 1;
-                        diceElement.classList.remove('rolling');
-                        diceElement.className = `bi bi-dice-${randomNumber} dice`;
-                        dices[diceId.charAt(4)] = randomNumber;
-
-                        completed++
-
-                        if (completed === diceIds.length) {
-                            socket.emit('dices', {
-                                room_number: room_number,
-                                uuid: uuid,
-                                dices: dices,
-                                locked_dices: locked_dices
-                            });
-                        }
-                    }
-                }, 500);// Wait in Millisec
-            } else {
-                locked_dices.push(diceId);
-                completed++
-
-                if (completed === diceIds.length) {
-                    socket.emit('dices', {
-                        room_number: room_number,
-                        uuid: uuid,
-                        dices: dices,
-                        locked_dices: locked_dices
-                    });
-                }
+        if (is_current_player === true) {
+            // need to lock the room?
+            if (room_locked === false) {
+                socket.emit('lock_room', {
+                    room_number: room_number
+                });
             }
-        });
+            setTimeout(function () {
+                document.getElementById('würfel').disabled = false;
+            }, 2000);
+
+            diceIds.forEach(diceId => {
+                const diceElement = document.getElementById(diceId);
+                if (!diceElement.classList.contains('locked')) {
+                    diceElement.classList.add('rolling');
+                    setTimeout(() => {
+                        if (diceElement.classList.contains('rolling')) {
+                            const randomNumber = Math.floor(Math.random() * 6) + 1;
+                            diceElement.classList.remove('rolling');
+                            diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                            dices[diceId.charAt(4)] = randomNumber;
+
+                            completed++
+
+                            if (completed === diceIds.length) {
+                                socket.emit('dices', {
+                                    room_number: room_number,
+                                    uuid: uuid,
+                                    dices: dices,
+                                    locked_dices: locked_dices
+                                });
+                            }
+                        }
+                    }, 500);// Wait in Millisec
+                } else {
+                    locked_dices.push(diceId);
+                    completed++
+
+                    if (completed === diceIds.length) {
+                        socket.emit('dices', {
+                            room_number: room_number,
+                            uuid: uuid,
+                            dices: dices,
+                            locked_dices: locked_dices
+                        });
+                    }
+                }
+            });
+        }
     }
 
     function next() {
