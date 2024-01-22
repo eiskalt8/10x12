@@ -162,10 +162,12 @@
 
     function next() {
         deactivate_buttons()
+        let score = get_score()
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,
-                uuid: uuid
+                uuid: uuid,
+                score: score
             });
             is_current_player = false;
         }
@@ -441,6 +443,16 @@
             }
         });
     });
+
+    function get_score() {
+        let score = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0}
+        score.forEach(number => {
+            console.log(number);
+            score[number] = score[number] + 1;
+            console.log(score[number]);
+        });
+        return score
+    }
 </script>
 </body>
 </html>

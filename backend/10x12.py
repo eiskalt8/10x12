@@ -223,6 +223,7 @@ def lock_room(data):
 def next_player(data):
     room_number = data['room_number']
     uuid = data['uuid']
+    score = data['score']
 
     conn = connect_to_db()
     cursor = conn.cursor()
