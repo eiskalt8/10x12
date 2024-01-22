@@ -1,7 +1,7 @@
+import json
 import random
 import sqlite3
 import time
-import json
 
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit, join_room
@@ -257,6 +257,7 @@ def player_dices(data):
     room_number = data['room_number']
     uuid = data['uuid']
     new_dices = data['dices']
+    locked_dices = data['locked_dices']
 
     conn = connect_to_db()
     cursor = conn.cursor()
@@ -270,13 +271,17 @@ def player_dices(data):
             if result:
                 dices = result[0]
                 dices_dict = json.loads(dices)['dices']
-                dices_dict.update(new_dices)
+                if new_dices and locked_dices is not False:  # for only get current dices at reload (dices is false)
+                    dices_dict.update(new_dices)
 
-                cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
-                               (json.dumps({'dices': dices_dict}), room_number))
-                conn.commit()
-                # TODO also emit locked status for other players
-                emit('new_dices', {'new_dices': dices_dict}, broadcast=True, include_self=False, to=room_number)
+                    cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
+                                   (json.dumps({'dices': dices_dict}), room_number))
+                    conn.commit()
+                    # TODO also emit locked status for other players
+                    emit('new_dices', {'new_dices': dices_dict, 'locked_dices': locked_dices}, broadcast=True,
+                         include_self=False, to=room_number)
+                else:
+                    emit('new_dices', {'new_dices': dices_dict})
 
     conn.close()
 

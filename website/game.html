@@ -80,6 +80,13 @@
             room_number: room_number,
             uuid: uuid
         });
+        // for only get current dices at reload
+        socket.emit('dices', {
+            room_number: room_number,
+            uuid: uuid,
+            dices: false,
+            locked_dices: false
+        });
     });
 
     socket.on('disconnect', function () {
@@ -105,6 +112,7 @@
         }
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
         let dices = {};
+        let locked_dices = [];
         let completed = 0
         document.getElementById('würfel').disabled = true;
         setTimeout(function () {
@@ -124,18 +132,19 @@
 
                         completed++
 
-                        if (completed === diceIds.length) {
-                            console.log(dices)
-                            socket.emit('dices', {
-                                room_number: room_number,
-                                uuid: uuid,
-                                dices: dices
-                            });
-                        }
                     }
                 }, 500);// Wait in Millisec
             } else {
+                locked_dices.push(diceId);
                 completed++
+            }
+            if (completed === diceIds.length) {
+                socket.emit('dices', {
+                    room_number: room_number,
+                    uuid: uuid,
+                    dices: dices,
+                    locked_dices: locked_dices
+                });
             }
         });
     }
@@ -144,7 +153,7 @@
         document.getElementById('next').disabled = true;
         document.getElementById('würfel').disabled = true;
         for (let i = 1; i <= 6; i++) {
-                document.getElementById(`lock${i}`).disabled = true;
+            document.getElementById(`lock${i}`).disabled = true;
         }
         if (is_current_player === true) {
             socket.emit('next_player', {
@@ -169,7 +178,7 @@
                 </span>
             </div>
             <div class="col w-100 text-end">
-                <button type="button" class="btn btn-info">
+                <button class="btn btn-info" type="button">
                     <i class="bi bi-lightbulb"></i>
                     <i class="bi bi-lightbulb-fill"></i>
                 </button>
@@ -222,37 +231,37 @@
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
                     <div>
-                        <input class="form-check-input dicebox" id="lock1" onchange="toggleLock('dice1')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock1"
+                               onchange="toggleLock('dice1')" type="checkbox">
                     </div>
                     <div>
-                        <input class="form-check-input dicebox" id="lock2" onchange="toggleLock('dice2')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock2"
+                               onchange="toggleLock('dice2')" type="checkbox">
                     </div>
                     <div>
-                        <input class="form-check-input dicebox" id="lock3" onchange="toggleLock('dice3')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock3"
+                               onchange="toggleLock('dice3')" type="checkbox">
                     </div>
                     <div>
-                        <input class="form-check-input dicebox" id="lock4" onchange="toggleLock('dice4')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock4"
+                               onchange="toggleLock('dice4')" type="checkbox">
                     </div>
                     <div>
-                        <input class="form-check-input dicebox" id="lock5" onchange="toggleLock('dice5')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock5"
+                               onchange="toggleLock('dice5')" type="checkbox">
                     </div>
                     <div>
-                        <input class="form-check-input dicebox" id="lock6" onchange="toggleLock('dice6')"
-                               type="checkbox" disabled>
+                        <input class="form-check-input dicebox" disabled id="lock6"
+                               onchange="toggleLock('dice6')" type="checkbox">
                     </div>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="margin-bottom: 0.5em">
-                    <button class="btn btn-primary" id="würfel" onclick="rollDice()"
-                            style="margin-right: 0.8em; margin-left: 0.8em" disabled>
+                    <button class="btn btn-primary" disabled id="würfel"
+                            onclick="rollDice()" style="margin-right: 0.8em; margin-left: 0.8em">
                         Würfeln
                     </button>
-                    <button class="btn btn-primary" id="next" onclick="next()"
-                            style="margin-right: 0.8em; margin-left: 0.8em" disabled>
+                    <button class="btn btn-primary" disabled id="next"
+                            onclick="next()" style="margin-right: 0.8em; margin-left: 0.8em">
                         Weiter
                     </button>
                 </div>
@@ -389,16 +398,22 @@
 
     socket.on('new_dices', function (data) {
         const new_dices = data.new_dices;
-        console.log(new_dices);
+        const locked_dices = data.locked_dices;
         const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
 
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
-            diceElement.classList.add('rolling');
-            setTimeout(() => {
-                diceElement.classList.remove('rolling');
-                diceElement.className = `bi bi-dice-${new_dices[diceId.charAt(4)]} dice`;
-            }, 500);// Wait in Millisec
+            diceElement.classList.remove('locked')
+            if (diceId in locked_dices) {
+                diceElement.classList.add('locked')
+            }
+            if (!diceElement.classList.contains('locked')) {
+                diceElement.classList.add('rolling');
+                setTimeout(() => {
+                    diceElement.classList.remove('rolling');
+                    diceElement.className = `bi bi-dice-${new_dices[diceId.charAt(4)]} dice`;
+                }, 500);// Wait in Millisec
+            }
         });
     });
 </script>
