@@ -161,11 +161,7 @@
     }
 
     function next() {
-        document.getElementById('next').disabled = true;
-        document.getElementById('würfel').disabled = true;
-        for (let i = 1; i <= 6; i++) {
-            document.getElementById(`lock${i}`).disabled = true;
-        }
+        deactivate_buttons()
         if (is_current_player === true) {
             socket.emit('next_player', {
                 room_number: room_number,
@@ -392,7 +388,11 @@
             const diceElement = document.getElementById(diceId);
             diceElement.classList.remove('locked');
         });
-        $(":checkbox").prop('checked', false).parent().removeClass('active');
+        for (let i = 1; i <= 6; i++) {
+            const checkbox = document.getElementById(`lock${i}`);
+            checkbox.checked = false;
+            checkbox.parentElement.classList.remove('active');
+        }
 
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
@@ -411,6 +411,14 @@
             for (let i = 1; i <= 6; i++) {
                 document.getElementById(`lock${i}`).disabled = false;
             }
+        }
+    }
+
+    function deactivate_buttons() {
+        document.getElementById('next').disabled = true;
+        document.getElementById('würfel').disabled = true;
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById(`lock${i}`).disabled = true;
         }
     }
 
