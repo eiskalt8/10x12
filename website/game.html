@@ -30,6 +30,7 @@
         const username = localStorage.getItem('username')
         let room_locked = false
         let is_current_player = false
+        const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
     </script>
     <style>
         .dice {
@@ -110,7 +111,6 @@
                 room_number: room_number
             });
         }
-        const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
         let dices = {};
         let locked_dices = [];
         let completed = 0
@@ -385,6 +385,12 @@
     }
 
     socket.on('new_next_player', function (data) {
+        diceIds.forEach(diceId => {
+            const diceElement = document.getElementById(diceId);
+            diceElement.classList.remove('locked');
+        });
+        $(":checkbox").prop('checked', false).parent().removeClass('active');
+
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
             is_current_player = true
@@ -408,13 +414,12 @@
     socket.on('new_dices', function (data) {
         const new_dices = data.new_dices;
         const locked_dices = data.locked_dices;
-        const diceIds = ["dice1", "dice2", "dice3", "dice4", "dice5", "dice6"];
 
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
-            diceElement.classList.remove('locked')
-            if (diceId in locked_dices) {
-                diceElement.classList.add('locked')
+            diceElement.classList.remove('locked');
+            if (locked_dices && locked_dices.includes(diceId)) {
+                diceElement.classList.add('locked');
             }
             if (!diceElement.classList.contains('locked')) {
                 diceElement.classList.add('rolling');
