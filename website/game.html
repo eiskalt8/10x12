@@ -132,19 +132,28 @@
 
                         completed++
 
+                        if (completed === diceIds.length) {
+                            socket.emit('dices', {
+                                room_number: room_number,
+                                uuid: uuid,
+                                dices: dices,
+                                locked_dices: locked_dices
+                            });
+                        }
                     }
                 }, 500);// Wait in Millisec
             } else {
                 locked_dices.push(diceId);
                 completed++
-            }
-            if (completed === diceIds.length) {
-                socket.emit('dices', {
-                    room_number: room_number,
-                    uuid: uuid,
-                    dices: dices,
-                    locked_dices: locked_dices
-                });
+
+                if (completed === diceIds.length) {
+                    socket.emit('dices', {
+                        room_number: room_number,
+                        uuid: uuid,
+                        dices: dices,
+                        locked_dices: locked_dices
+                    });
+                }
             }
         });
     }
