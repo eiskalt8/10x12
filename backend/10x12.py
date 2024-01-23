@@ -212,8 +212,8 @@ def lock_room(data):
                            (room_number,))
             conn.commit()
             emit("room_locked",
-                 {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'},
-                 broadcast=True, include_self=True, to=room_number)
+                 {'message': 'Raum: ' + room_number + ' wurde für andere Spieler gesperrt!'}, broadcast=True,
+                 include_self=True, to=room_number)
         else:
             emit("room_locked", {}, broadcast=True, include_self=True, to=room_number)
     conn.close()
@@ -223,7 +223,6 @@ def lock_room(data):
 def next_player(data):
     room_number = data['room_number']
     uuid = data['uuid']
-    score = data['score']
 
     conn = connect_to_db()
     cursor = conn.cursor()
@@ -246,8 +245,8 @@ def next_player(data):
                                (next_player_uuid, room_number))
                 conn.commit()
                 current_player = next_player_uuid[:8]
-                emit("new_next_player", {'current_player': current_player}, broadcast=True,
-                     include_self=True, to=room_number)
+                emit("new_next_player", {'current_player': current_player}, broadcast=True, include_self=True,
+                     to=room_number)
             else:
                 return False  # requester is not current_player and therefore can not end turn
     conn.close()
@@ -286,6 +285,32 @@ def player_dices(data):
                 emit('new_dices', {'new_dices': dices_dict})
 
     conn.close()
+
+
+@socketio.on('new_score')
+def new_score(data):
+    room_number = data['room_number']
+    uuid = data['uuid']
+    score = data['score']
+    uuid_part = uuid[:8]
+
+    conn = connect_to_db()
+    cursor = conn.cursor()
+
+    if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
+        result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
+                                (room_number,)).fetchone()
+        if result and uuid == result[0]:
+            result = cursor.execute("Select scores FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+            if result:
+                old_score = result[0]
+                old_score = json.loads(old_score)  # load old score
+                player_score = json.loads(old_score)[uuid_part]  # get score part for current player
+                player_score.update(score)  # update score part
+                player_score = json.dumps({uuid_part: player_score})  # dump new score part of current player
+                new_scores = old_score.update(player_score)  # update hole score json
+
+                emit("new_scores", {'new_scores': new_scores}, broadcast=True, include_self=True, to=room_number)
 
 
 if __name__ == '__main__':
