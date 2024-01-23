@@ -386,7 +386,7 @@
                     let rowHtml = `<tr><th scope="row">${row}</th>`;
 
                     for (let col = 1; col <= 10; col++) {
-                        rowHtml += `<td id="${row}-${col}"></td>`;
+                        rowHtml += `<td id="player${i}-${row}-${col}"></td>`;
                     }
 
                     rowHtml += `<th scope="row">${row}</th></tr>`;
@@ -459,7 +459,7 @@
         let score = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0}
         for (let number in score) {
             for (let i=1; i<=10; i++){
-                let checkbox = document.getElementById(`${number}-${i}`)
+                let checkbox = document.querySelector(`input#${number}-${i}`)
                 if (checkbox.checked) {
                     score[number] = score[number] + 1;
                 }
