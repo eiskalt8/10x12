@@ -303,16 +303,17 @@ def new_score(data):
         if result and uuid == result[0]:
             result = cursor.execute("Select scores FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
             if result:
-                old_score = result[0]
-                old_score = json.loads(old_score)  # load old score
-                player_score = json.loads(old_score)[uuid_part]  # get score part for current player
-                player_score.update(score)  # update score part
-                player_score = json.dumps({uuid_part: player_score})  # dump new score part of current player
-                new_scores = old_score.update(player_score)  # update hole score json
+                old_scores = json.loads(result[0])
+                player_score = old_scores.get(uuid_part, {})
+                player_score.update(score)
+                old_scores[uuid_part] = player_score
+                new_scores = json.dumps(old_scores)
 
                 cursor.execute("Update Sessions set scores = ? where SessionID = ?", (new_scores, room_number))
+                conn.commit()
 
                 emit("new_scores", {'new_scores': new_scores}, broadcast=True, include_self=True, to=room_number)
+    conn.close()
 
 
 if __name__ == '__main__':
