@@ -310,6 +310,8 @@ def new_score(data):
                 player_score = json.dumps({uuid_part: player_score})  # dump new score part of current player
                 new_scores = old_score.update(player_score)  # update hole score json
 
+                cursor.execute("Update Sessions set scores = ? where SessionID = ?", (new_scores, room_number))
+
                 emit("new_scores", {'new_scores': new_scores}, broadcast=True, include_self=True, to=room_number)
 
 
