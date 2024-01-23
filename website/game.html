@@ -465,14 +465,13 @@
                 }
             }
         }
-        console.log(score);
         return score
     }
 
     socket.on('new_scores', function (data) {
         const new_scores = data.new_scores;
         console.log(new_scores)
-    })
+    });
 </script>
 </body>
 </html>
