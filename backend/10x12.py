@@ -245,10 +245,8 @@ def next_player(data):
                                (next_player_uuid, room_number))
                 conn.commit()
                 current_player = next_player_uuid[:8]
-                userlist_long = user_list.remove(next_player_uuid)
-                userlist = []
-                for user in userlist_long:
-                    userlist.append(user[:8])
+                user_list.remove(next_player_uuid)
+                userlist = [user[:8] for user in user_list]
 
                 emit("new_next_player", {'current_player': current_player, 'userlist': userlist}, broadcast=True,
                      include_self=True,
