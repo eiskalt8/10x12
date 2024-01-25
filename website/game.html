@@ -88,13 +88,14 @@
             dices: false,
             locked_dices: false
         });
-        // for showing the scores at reload
-        socket.emit('new_score', {
-            room_number: room_number,
-            uuid: uuid,
-            score: false
-        });
-
+        setTimeout(function () {
+            // for showing the scores at reload
+            socket.emit('new_score', {
+                room_number: room_number,
+                uuid: uuid,
+                score: false
+            });
+        }, 2000);
     });
 
     socket.on('disconnect', function () {
@@ -475,7 +476,7 @@
         return score
     }
 
-    socket.on('new_scores', function(data) {
+    socket.on('new_scores', function (data) {
         let new_scores = JSON.parse(data.new_scores);
         for (let uuid_part_ in new_scores) {
             for (let number in new_scores[uuid_part_]) {
