@@ -245,7 +245,13 @@ def next_player(data):
                                (next_player_uuid, room_number))
                 conn.commit()
                 current_player = next_player_uuid[:8]
-                emit("new_next_player", {'current_player': current_player}, broadcast=True, include_self=True,
+                userlist_long = user_list.remove(current_player)
+                userlist = []
+                for user in userlist_long:
+                    userlist.append(user[:8])
+
+                emit("new_next_player", {'current_player': current_player, 'userlist': userlist}, broadcast=True,
+                     include_self=True,
                      to=room_number)
             else:
                 return False  # requester is not current_player and therefore can not end turn

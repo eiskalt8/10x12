@@ -222,21 +222,27 @@
     <div class="row">
         <!-- left side -->
         <div class="col-sm">
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1">
-                <caption class="text-center" id="player1"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3">
-                <caption class="text-center" id="player3"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5">
-                <caption class="text-center" id="player5"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
+            <div class="rounded" id="user_table1">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1">
+                    <caption class="text-center" id="player1"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
+            <div class="rounded" id="user_table3">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3">
+                    <caption class="text-center" id="player3"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
+            <div class="rounded" id="user_table5">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5">
+                    <caption class="text-center" id="player5"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
         </div>
         <!-- center -->
         <div class="col-lg-6">
@@ -319,21 +325,27 @@
         </div>
         <!-- right side -->
         <div class="col-sm">
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2">
-                <caption class="text-center" id="player2"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4">
-                <caption class="text-center" id="player4"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
-            <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6">
-                <caption class="text-center" id="player6"></caption>
-                <tbody class="border-primary">
-                </tbody>
-            </table>
+            <div class="rounded" id="user_table2">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2">
+                    <caption class="text-center" id="player2"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
+            <div class="rounded" id="user_table4">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4">
+                    <caption class="text-center" id="player4"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
+            <div class="rounded" id="user_table6">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6">
+                    <caption class="text-center" id="player6"></caption>
+                    <tbody class="border-primary">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -369,7 +381,7 @@
         let player = data.current_player;
         const current_player_p = document.getElementById("current_player");
         if (!(player === "nicht gefunden!")) { // if uuid was found
-            current_player_p.innerHTML = player // TODO change border color from current_player_table
+            current_player_p.innerHTML = player
             if (player === uuid_part) {
                 is_current_player = true // set variable to allow next()
                 activate_buttons()
@@ -389,6 +401,10 @@
             const tableBody = document.querySelector(`#Table${i} tbody`);
 
             if (tableBody.children.length === 0) {
+                // switch id of table border to uuid_part
+                const tableBorder = document.getElementById(`user_table${i}`);
+                tableBorder.id = names[i - 1][1]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
+                // set caption of table to name
                 const tableCaption = document.querySelector(`#Table${i} caption`);
                 tableCaption.innerHTML = names[i - 1][0]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
 
@@ -407,6 +423,7 @@
     }
 
     socket.on('new_next_player', function (data) {
+        const userlist = data.userlist;
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
             diceElement.classList.remove('locked');
@@ -419,12 +436,15 @@
 
         let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
-            is_current_player = true
+            is_current_player = true;
             activate_buttons()
+            document.getElementById("border_player_table").classList.add("custom_border");
         }
+        // set custom_border
+        change_custom_border(currentPlayer, userlist)
+        // TODO change border color from current_player_table and remove this
         const current_player_p = document.getElementById("current_player");
         current_player_p.innerHTML = currentPlayer
-        // TODO change border color from current_player_table
     });
 
     function activate_buttons() {
@@ -435,10 +455,11 @@
                 document.getElementById(`lock${i}`).disabled = false;
             }
             for (let row = 1; row <= 12; row++) {
-            for (let col = 1; col <= 10; col++) {
-                document.getElementById(`${row}-${col}`).disabled = false;
+                for (let col = 1; col <= 10; col++) {
+                    document.getElementById(`${row}-${col}`).disabled = false;
+                    document.getElementById(`${row}-${col}`).parentElement.classList.add('active');
+                }
             }
-        }
         }
     }
 
@@ -451,6 +472,7 @@
         for (let row = 1; row <= 12; row++) {
             for (let col = 1; col <= 10; col++) {
                 document.getElementById(`${row}-${col}`).disabled = true;
+                document.getElementById(`${row}-${col}`).parentElement.classList.remove('active');
             }
         }
     }
@@ -517,6 +539,15 @@
             }
         }
     });
+
+    function change_custom_border(currentPlayer, userlist) {
+        document.getElementById(currentPlayer).classList.add("custom_border");
+        for (let user in userlist) {
+            if (document.getElementById(currentPlayer).classList.contains("custom_border")) {
+                document.getElementById(currentPlayer).classList.remove("custom_border");
+            }
+        }
+    }
 </script>
 </body>
 </html>
