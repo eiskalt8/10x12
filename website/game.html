@@ -480,6 +480,19 @@
         let new_scores = JSON.parse(data.new_scores);
         for (let uuid_part_ in new_scores) {
             for (let number in new_scores[uuid_part_]) {
+                // disable checkboxes and remove all success
+                for (let i = 1; i <= 10; i++) {
+                    if (uuid_part_ === uuid_part) {
+                        let checkbox = document.getElementById(`${number}-${i}`);
+                        checkbox.checked = false;
+                    } else {
+                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
+                        if (field.classList.contains("table-success")) {
+                            field.classList.remove("table-success");
+                        }
+                    }
+                }
+                // show new scores
                 for (let i = 1; i <= new_scores[uuid_part_][number]; i++) {
                     if (uuid_part_ === uuid_part) {
                         let checkbox = document.getElementById(`${number}-${i}`);
