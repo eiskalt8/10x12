@@ -245,7 +245,7 @@ def next_player(data):
                                (next_player_uuid, room_number))
                 conn.commit()
                 current_player = next_player_uuid[:8]
-                userlist_long = user_list.remove(current_player)
+                userlist_long = user_list.remove(next_player_uuid)
                 userlist = []
                 for user in userlist_long:
                     userlist.append(user[:8])
