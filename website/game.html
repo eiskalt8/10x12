@@ -423,8 +423,9 @@
     }
 
     socket.on('new_next_player', function (data) {
-        const userlist = data.userlist;
-        console.log(userlist)
+        let userlist = data.userlist;
+        let currentPlayer = data.current_player;
+        console.log(userlist, currentPlayer);
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
             diceElement.classList.remove('locked');
@@ -434,8 +435,6 @@
             checkbox.checked = false;
             checkbox.parentElement.classList.remove('active');
         }
-
-        let currentPlayer = data.current_player;
         if (currentPlayer === uuid_part) {
             is_current_player = true;
             activate_buttons()
@@ -543,17 +542,21 @@
     function change_custom_border(userlist, current_player) {
         if (is_current_player === true) {
             document.getElementById("border_player_table").classList.add("custom_border");
+            console.log("added main border");
         } else {
             if (document.getElementById("border_player_table").classList.contains("custom_border")) {
                 document.getElementById("border_player_table").classList.remove("custom_border");
+                console.log("removed main border");
             }
         }
         for (let user in userlist) {
             if (document.getElementById(user).classList.contains("custom_border")) {
                 document.getElementById(user).classList.remove("custom_border");
+                console.log("removed border for" + user);
             }
             if (user === current_player) {
                 document.getElementById(user).classList.add("custom_border");
+                console.log("added border for" + user + current_player);
             }
         }
     }
