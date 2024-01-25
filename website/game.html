@@ -554,10 +554,14 @@
             if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
                 document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
                 console.log("removed border for" + userlist[i]);
+            } else {
+                console.log("nothing removed");
             }
             if (userlist[i] === current_player) {
                 document.getElementById(`${userlist[i]}`).classList.add("custom_border");
                 console.log("added border for" + userlist[i] + current_player);
+            }else {
+                console.log("nothing added");
             }
         }
     }
