@@ -88,11 +88,14 @@
             dices: false,
             locked_dices: false
         });
-        socket.emit('new_score', {
-            room_number: room_number,
-            uuid: uuid,
-            score: false
-        });
+        setTimeout(function () {
+            socket.emit('new_score', {
+                room_number: room_number,
+                uuid: uuid,
+                score: false
+            });
+        }, 1000);
+
     });
 
     socket.on('disconnect', function () {

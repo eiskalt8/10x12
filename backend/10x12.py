@@ -176,7 +176,7 @@ def check_room(data):
 
                             name_list = create_namelist(user_list)
                             current_player = get_current_player(room_number)
-                            time.sleep(3)  # TODO find right way that user with request gets that emit too
+                            time.sleep(2)  # TODO find right way that user with request gets that emit too
                             emit("update_amount_tables", {'names': name_list, 'current_player': current_player},
                                  broadcast=True, include_self=True, to=room_number)
                     else:
@@ -190,7 +190,7 @@ def check_room(data):
 
                 name_list = create_namelist(user_list)
                 current_player = get_current_player(room_number)
-                time.sleep(3)  # TODO find right way that user with request gets that emit too
+                time.sleep(2)  # TODO find right way that user with request gets that emit too
                 emit("update_amount_tables", {'names': name_list, 'current_player': current_player}, broadcast=True,
                      include_self=True, to=room_number)
     else:
