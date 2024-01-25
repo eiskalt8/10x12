@@ -549,14 +549,14 @@
                 console.log("removed main border");
             }
         }
-        for (let user in userlist) {
-            if (document.getElementById(user).classList.contains("custom_border")) {
-                document.getElementById(user).classList.remove("custom_border");
-                console.log("removed border for" + user);
+        for (let i = 0; i <= userlist.length - 1; i++) {
+            if (document.getElementById(userlist[i]).classList.contains("custom_border")) {
+                document.getElementById(userlist[i]).classList.remove("custom_border");
+                console.log("removed border for" + userlist[i]);
             }
-            if (user === current_player) {
-                document.getElementById(user).classList.add("custom_border");
-                console.log("added border for" + user + current_player);
+            if (userlist[i] === current_player) {
+                document.getElementById(userlist[i]).classList.add("custom_border");
+                console.log("added border for" + userlist[i] + current_player);
             }
         }
     }
