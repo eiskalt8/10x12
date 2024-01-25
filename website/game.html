@@ -94,6 +94,7 @@
             uuid: uuid,
             score: false
         });
+
     });
 
     socket.on('disconnect', function () {
@@ -474,16 +475,16 @@
         return score
     }
 
-    socket.on('new_scores', (data) => {
+    socket.on('new_scores', function(data) {
         let new_scores = JSON.parse(data.new_scores);
-        for (let uuid_part in new_scores) {
-            for (let number in new_scores[uuid_part]) {
-                for (let i = 1; i <= new_scores[uuid_part][number]; i++) {
-                    if (uuid_part === this.uuid_part) {
+        for (let uuid_part_ in new_scores) {
+            for (let number in new_scores[uuid_part_]) {
+                for (let i = 1; i <= new_scores[uuid_part_][number]; i++) {
+                    if (uuid_part_ === uuid_part) {
                         let checkbox = document.getElementById(`${number}-${i}`);
                         checkbox.checked = true;
                     } else {
-                        let field = document.getElementById(`${uuid_part}-${number}-${i}`);
+                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
                         field.classList.add("table-success");
                     }
                 }
