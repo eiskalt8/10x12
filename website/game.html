@@ -354,7 +354,7 @@
         let rowHtml = '<tr><th scope="row">' + row + '</th>';
 
         for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td><input class="form-check-input" type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
+            rowHtml += '<td><input class="form-check-input" disabled type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
         }
 
         rowHtml += '<th scope="row">' + row + '</th></tr>';
@@ -432,6 +432,11 @@
             for (let i = 1; i <= 6; i++) {
                 document.getElementById(`lock${i}`).disabled = false;
             }
+            for (let row = 1; row <= 12; row++) {
+            for (let col = 1; col <= 10; col++) {
+                document.getElementById(`${row}-${col}`).disabled = false;
+            }
+        }
         }
     }
 
@@ -440,6 +445,11 @@
         document.getElementById('würfel').disabled = true;
         for (let i = 1; i <= 6; i++) {
             document.getElementById(`lock${i}`).disabled = true;
+        }
+        for (let row = 1; row <= 12; row++) {
+            for (let col = 1; col <= 10; col++) {
+                document.getElementById(`${row}-${col}`).disabled = true;
+            }
         }
     }
 
