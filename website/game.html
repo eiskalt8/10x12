@@ -550,12 +550,13 @@
             }
         }
         for (let i = 0; i <= userlist.length - 1; i++) {
-            if (document.getElementById(userlist[i]).classList.contains("custom_border")) {
-                document.getElementById(userlist[i]).classList.remove("custom_border");
+            console.log(userlist.length - 1, userlist[i]);
+            if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
+                document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
                 console.log("removed border for" + userlist[i]);
             }
             if (userlist[i] === current_player) {
-                document.getElementById(userlist[i]).classList.add("custom_border");
+                document.getElementById(`${userlist[i]}`).classList.add("custom_border");
                 console.log("added border for" + userlist[i] + current_player);
             }
         }
