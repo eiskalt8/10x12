@@ -298,21 +298,25 @@ def new_score(data):
     cursor = conn.cursor()
 
     if cursor.execute("SELECT * FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone() is not None:
-        result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
-                                (room_number,)).fetchone()
-        if result and uuid == result[0]:
-            result = cursor.execute("Select scores FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
-            if result:
-                old_scores = json.loads(result[0])
-                player_score = old_scores.get(uuid_part, {})
-                player_score.update(score)
-                old_scores[uuid_part] = player_score
-                new_scores = json.dumps(old_scores)
+        result = cursor.execute("Select scores FROM Sessions WHERE SessionID = ?", (room_number,)).fetchone()
+        if result:
+            old_scores = json.loads(result[0])
+            if score is not False:
+                result = cursor.execute("Select current_player FROM Sessions WHERE SessionID = ?",
+                                        (room_number,)).fetchone()
+                if result and uuid == result[0]:
+                    player_score = old_scores.get(uuid_part, {})
+                    player_score.update(score)
+                    old_scores[uuid_part] = player_score
 
-                cursor.execute("Update Sessions set scores = ? where SessionID = ?", (new_scores, room_number))
-                conn.commit()
+                    cursor.execute("Update Sessions set scores = ? where SessionID = ?",
+                                   (json.dumps(old_scores), room_number))
+                    conn.commit()
 
-                emit("new_scores", {'new_scores': new_scores}, broadcast=True, include_self=True, to=room_number)
+                    emit("new_scores", {'new_scores': json.dumps(old_scores)}, broadcast=True, include_self=True,
+                         to=room_number)
+            else:
+                emit("new_scores", {'new_scores': json.dumps(old_scores)})
     conn.close()
 
 

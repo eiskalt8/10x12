@@ -88,6 +88,11 @@
             dices: false,
             locked_dices: false
         });
+        socket.emit('new_score', {
+            room_number: room_number,
+            uuid: uuid,
+            score: false
+        });
     });
 
     socket.on('disconnect', function () {
@@ -469,13 +474,19 @@
     }
 
     socket.on('new_scores', function (data) {
-        const new_scores = data.new_scores;
-        console.log(new_scores);
-        if (new_scores.hasOwnProperty(uuid_part)) {
-            delete new_scores[uuid_part];
-            console.log(new_scores)
-        } else {
-            console.log("eigene UUID nicht in new_scores!")
+        let new_scores = JSON.parse(data.new_scores);
+        for (let uuid_part in new_scores) {
+            for (let number in new_scores[uuid_part]) {
+                for (let i = 1; i <= new_scores[uuid_part][number]; i++) {
+                    if (uuid_part === this.uuid_part) {
+                        let checkbox = document.getElementById(`${number}-${i}`)
+                        checkbox.checked = true;
+                    } else {
+                        let field = document.getElementById(`${uuid_part}-${number}-${i}`)
+                        field.classList.add("table-success")
+                    }
+                }
+            }
         }
     });
 </script>
