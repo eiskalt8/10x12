@@ -189,6 +189,7 @@
                 score: score
             });
             is_current_player = false;
+            document.getElementById("border_player_table").classList.remove("custom_border");
         }
     }
 </script>
@@ -372,6 +373,7 @@
             if (player === uuid_part) {
                 is_current_player = true // set variable to allow next()
                 activate_buttons()
+                document.getElementById("border_player_table").classList.add("custom_border");
             }
         } else {
             current_player_p.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
