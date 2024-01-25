@@ -424,6 +424,7 @@
 
     socket.on('new_next_player', function (data) {
         const userlist = data.userlist;
+        console.log(userlist)
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
             diceElement.classList.remove('locked');
@@ -438,10 +439,9 @@
         if (currentPlayer === uuid_part) {
             is_current_player = true;
             activate_buttons()
-            document.getElementById("border_player_table").classList.add("custom_border");
         }
         // set custom_border
-        change_custom_border(currentPlayer, userlist)
+        change_custom_border(userlist, currentPlayer)
         // TODO change border color from current_player_table and remove this
         const current_player_p = document.getElementById("current_player");
         current_player_p.innerHTML = currentPlayer
@@ -540,11 +540,20 @@
         }
     });
 
-    function change_custom_border(currentPlayer, userlist) {
-        document.getElementById(currentPlayer).classList.add("custom_border");
+    function change_custom_border(userlist, current_player) {
+        if (is_current_player === true) {
+            document.getElementById("border_player_table").classList.add("custom_border");
+        } else {
+            if (document.getElementById("border_player_table").classList.contains("custom_border")) {
+                document.getElementById("border_player_table").classList.remove("custom_border");
+            }
+        }
         for (let user in userlist) {
-            if (document.getElementById(currentPlayer).classList.contains("custom_border")) {
-                document.getElementById(currentPlayer).classList.remove("custom_border");
+            if (document.getElementById(user).classList.contains("custom_border")) {
+                document.getElementById(user).classList.remove("custom_border");
+            }
+            if (user === current_player) {
+                document.getElementById(user).classList.add("custom_border");
             }
         }
     }
