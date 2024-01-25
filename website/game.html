@@ -539,7 +539,6 @@
     });
 
     function change_custom_border(userlist, current_player) {
-        document.addEventListener("DOMContentLoaded", function () {
             if (is_current_player === true) {
                 document.getElementById("border_player_table").classList.add("custom_border");
                 console.log("added main border");
@@ -549,6 +548,7 @@
                     console.log("removed main border");
                 }
             }
+            document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i <= userlist.length - 1; i++) {
                 console.log(userlist.length - 1, userlist[i]);
                 if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
