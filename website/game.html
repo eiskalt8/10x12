@@ -539,32 +539,28 @@
     });
 
     function change_custom_border(userlist, current_player) {
-            if (is_current_player === true) {
-                document.getElementById("border_player_table").classList.add("custom_border");
-                console.log("added main border");
+        if (is_current_player === true) {
+            document.getElementById("border_player_table").classList.add("custom_border");
+        } else {
+            if (document.getElementById("border_player_table").classList.contains("custom_border")) {
+                document.getElementById("border_player_table").classList.remove("custom_border");
+            }
+        }
+        for (let i = 0; i <= userlist.length - 1; i++) {
+            console.log(userlist.length - 1, userlist[i]);
+            if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
+                document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
+                console.log("removed border for" + userlist[i]);
             } else {
-                if (document.getElementById("border_player_table").classList.contains("custom_border")) {
-                    document.getElementById("border_player_table").classList.remove("custom_border");
-                    console.log("removed main border");
-                }
+                console.log("nothing removed");
             }
-            document.addEventListener("DOMContentLoaded", function () {
-            for (let i = 0; i <= userlist.length - 1; i++) {
-                console.log(userlist.length - 1, userlist[i]);
-                if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
-                    document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
-                    console.log("removed border for" + userlist[i]);
-                } else {
-                    console.log("nothing removed");
-                }
-                if (userlist[i] === current_player) {
-                    document.getElementById(`${userlist[i]}`).classList.add("custom_border");
-                    console.log("added border for" + userlist[i] + current_player);
-                } else {
-                    console.log("nothing added");
-                }
+            if (userlist[i] === current_player) {
+                document.getElementById(`${userlist[i]}`).classList.add("custom_border");
+                console.log("added border for" + userlist[i] + current_player);
+            } else {
+                console.log("nothing added");
             }
-        });
+        }
     }
 </script>
 </body>
