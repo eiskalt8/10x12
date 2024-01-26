@@ -222,21 +222,21 @@
         <!-- left side -->
         <div class="col-sm">
             <div class="rounded" id="user_table1">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1" style="margin-bottom: 0">
                     <caption class="text-center" id="player1"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table3">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3" style="margin-bottom: 0">
                     <caption class="text-center" id="player3"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table5">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5" style="margin-bottom: 0">
                     <caption class="text-center" id="player5"></caption>
                     <tbody class="border-primary">
                     </tbody>
@@ -325,21 +325,21 @@
         <!-- right side -->
         <div class="col-sm">
             <div class="rounded" id="user_table2">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2" style="margin-bottom: 0">
                     <caption class="text-center" id="player2"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table4">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4" style="margin-bottom: 0">
                     <caption class="text-center" id="player4"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table6">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6">
+                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6"style="margin-bottom: 0">
                     <caption class="text-center" id="player6"></caption>
                     <tbody class="border-primary">
                     </tbody>
@@ -424,7 +424,6 @@
     socket.on('new_next_player', function (data) {
         let userlist = data.userlist;
         let currentPlayer = data.current_player;
-        console.log(userlist, currentPlayer);
         diceIds.forEach(diceId => {
             const diceElement = document.getElementById(diceId);
             diceElement.classList.remove('locked');
@@ -539,9 +538,7 @@
     });
 
     function change_custom_border(userlist, current_player) {
-        console.log(userlist);
         userlist.splice(userlist.indexOf(uuid_part), 1); // remove own uuid_part
-        console.log(userlist);
         if (is_current_player === true) {
             document.getElementById("border_player_table").classList.add("custom_border");
         } else {
@@ -550,18 +547,11 @@
             }
         }
         for (let i = 0; i <= userlist.length - 1; i++) {
-            console.log(userlist.length - 1, userlist[i]);
             if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
                 document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
-                console.log("removed border for" + userlist[i]);
-            } else {
-                console.log("nothing removed");
             }
             if (userlist[i] === current_player) {
                 document.getElementById(`${userlist[i]}`).classList.add("custom_border");
-                console.log("added border for" + userlist[i] + current_player);
-            } else {
-                console.log("nothing added");
             }
         }
     }
