@@ -11,16 +11,17 @@ $(document).ready(function () {
             username: localStorage.getItem("username"),
             uuid: localStorage.getItem("uuid")
         });
+        window.location.href = "mode.html";
     });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
     get_color();
+    document.getElementById("darkModeButton").addEventListener("click", function () {
+        switch_color();
+    });
 });
 
-document.getElementById("darkModeButton").addEventListener("click", function () {
-    switch_color();
-});
 //handle name
 function save_name() {
     const name = document.getElementById("username-input").value
@@ -73,7 +74,7 @@ function switch_color() {
         if (localStorage.getItem("darkMode") === "true") {
             localStorage.setItem("darkMode", "false");
             get_color();
-        }else {
+        } else {
             localStorage.setItem("darkMode", "true");
             get_color();
         }
