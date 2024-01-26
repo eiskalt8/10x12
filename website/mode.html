@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
+    <base href="/">
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>10x12</title>
@@ -63,7 +64,7 @@
         });
     </script>
 </head>
-<body onload="get_name()">
+<body onload="get_name(); get_color()">
 
 <nav class="navbar">
     <div class="container-fluid">
@@ -79,9 +80,8 @@
                 </span>
             </div>
             <div class="col w-100 text-end">
-                <button type="button" class="btn btn-info">
-                <i class="bi bi-lightbulb"></i>
-                <i class="bi bi-lightbulb-fill"></i>
+                <button class="btn btn-info" type="button" onclick="switch_color()">
+                    <i id="darkModeButton" class="bi bi-lightbulb" style="font-size: large"></i>
                 </button>
             </div>
         </div>
