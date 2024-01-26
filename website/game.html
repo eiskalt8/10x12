@@ -76,12 +76,12 @@
 <script charset="utf-8" type="text/javascript">
     socket.on('connect', function () {
         console.log("connected")
-        // triggering join_room after refresh or if joined manually
+        // triggering join_room at reload and joining
         socket.emit('join_room', {
             room_number: room_number,
             uuid: uuid
         });
-        // for only get current dices at reload
+        // for only get current dices at reload and joining
         socket.emit('dices', {
             room_number: room_number,
             uuid: uuid,
@@ -89,11 +89,16 @@
             locked_dices: false
         });
         setTimeout(function () {
-            // for showing the scores at reload
+            // for showing the scores at reload and joining
             socket.emit('new_score', {
                 room_number: room_number,
                 uuid: uuid,
                 score: false
+            });
+            // for showing the current player border at reload and joining
+            socket.emit('next_player', {
+                room_number: room_number,
+                uuid: uuid,
             });
         }, 2000);
     });
@@ -301,11 +306,6 @@
                     </button>
                 </div>
             </div>
-            <!-- ONLY FOR DEV -->
-            <div class="container text-center">
-                Spieler am Zug: <p id="current_player"></p>
-            </div>
-            <!-- ONLY FOR DEV -->
             <div class="container text-center">
                 <div class="container text-center alert alert-danger alert-dismissible" id="lockmsg" role="alert"
                      style="display: none; max-width: fit-content">
@@ -439,9 +439,6 @@
         }
         // set custom_border
         change_custom_border(userlist, currentPlayer)
-        // TODO change border color from current_player_table and remove this
-        const current_player_p = document.getElementById("current_player");
-        current_player_p.innerHTML = currentPlayer
     });
 
     function activate_buttons() {

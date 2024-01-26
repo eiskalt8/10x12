@@ -244,6 +244,7 @@ def next_player(data):
                 cursor.execute("UPDATE Sessions SET last_used = DATE('now'), current_player = ? WHERE SessionID = ?",
                                (next_player_uuid, room_number))
                 conn.commit()
+                # shorten uuids before emit
                 current_player = next_player_uuid[:8]
                 userlist = [user[:8] for user in user_list]
 
@@ -251,7 +252,11 @@ def next_player(data):
                      include_self=True,
                      to=room_number)
             else:
-                return False  # requester is not current_player and therefore can not end turn
+                # requester is not current_player and therefore only get current data
+                # shorten uuids before emit
+                current_player = current_player[:8]
+                userlist = [user[:8] for user in user_list]
+                emit("new_next_player", {'current_player': current_player, 'userlist': userlist})
     conn.close()
 
 
