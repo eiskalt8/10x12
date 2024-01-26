@@ -286,7 +286,6 @@ def player_dices(data):
                     cursor.execute("UPDATE Sessions SET dices = ? WHERE SessionID = ?",
                                    (json.dumps({'dices': dices_dict}), room_number))
                     conn.commit()
-                    # TODO also emit locked status for other players
                     emit('new_dices', {'new_dices': dices_dict, 'locked_dices': locked_dices}, broadcast=True,
                          include_self=False, to=room_number)
             else:
@@ -329,5 +328,4 @@ def new_score(data):
 
 
 if __name__ == '__main__':
-    # TODO set reloader to False in prod
-    socketio.run(app, host='0.0.0.0', port=8080, log_output=False, use_reloader=True)
+    socketio.run(app, host='0.0.0.0', port=8080, log_output=False, use_reloader=False)
