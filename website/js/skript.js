@@ -60,8 +60,9 @@ $(document).ready(function () {
     });
 
     if (window.location.href.includes("game")) {
+        // TODO  find a way for fixing reload site
         // triggering join_room at reload and joining
-        socket.emit('join_room', {
+        /*socket.emit('join_room', {
             room_number: room_number,
             uuid: uuid
         });
@@ -84,7 +85,7 @@ $(document).ready(function () {
                 room_number: room_number,
                 uuid: uuid,
             });
-        }, 2000);
+        }, 2000);*/
 
         // generate big table
         const tableHead = document.querySelector('#playerTable thead');
@@ -176,7 +177,7 @@ $(document).ready(function () {
                             checkbox.checked = false;
                         } else {
                             let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
-                            if (field.classList.contains("table-success")) {
+                            if (field && field.classList.contains("table-success")) {
                                 field.classList.remove("table-success");
                             }
                         }
