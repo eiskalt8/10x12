@@ -43,16 +43,29 @@ function toggleLock(diceId) {
 }
 
 //Darkmode
-if (localStorage.getItem("darkMode") === true) {
-    document.documentElement.setAttribute('data-bs-theme', 'dark')
+function get_color() {
+    if (localStorage.getItem("darkMode") === "true") {
+        document.documentElement.setAttribute('data-bs-theme', 'dark')
+        document.getElementById("darkModeButton").classList.add("bi-lightbulb");
+        document.getElementById("darkModeButton").classList.remove("bi-lightbulb-fill");
+    } else {
+        document.documentElement.setAttribute('data-bs-theme', 'light')
+        document.getElementById("darkModeButton").classList.remove("bi-lightbulb");
+        document.getElementById("darkModeButton").classList.add("bi-lightbulb-fill");
+    }
 }
 
-/*document.getElementById('btnSwitch').addEventListener('click', () => {
-    if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-        document.documentElement.setAttribute('data-bs-theme', 'light')
-        localStorage.setItem("darkMode", false)
+function switch_color() {
+    if (localStorage.getItem("darkMode")) {
+        if (localStorage.getItem("darkMode") === "true") {
+            localStorage.setItem("darkMode", "false");
+            get_color();
+        }else {
+            localStorage.setItem("darkMode", "true");
+            get_color();
+        }
     } else {
-        document.documentElement.setAttribute('data-bs-theme', 'dark')
-        localStorage.setItem("darkMode", true)
+        localStorage.setItem("darkMode", "true");
+        get_color();
     }
-})*/
+}

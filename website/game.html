@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" xmlns="http://www.w3.org/1999/html">
+<html lang="de" xmlns="http://www.w3.org/1999/html" data-bs-theme="dark">
 <head>
     <base href="/">
     <meta charset="UTF-8">
@@ -71,7 +71,7 @@
         }
     </style>
 </head>
-<body onload="get_name()">
+<body onload="get_name(); get_color()">
 <script charset="utf-8" type="text/javascript">
     socket.on('connect', function () {
         console.log("connected")
@@ -211,9 +211,8 @@
                 </span>
             </div>
             <div class="col w-100 text-end">
-                <button class="btn btn-info" type="button">
-                    <i class="bi bi-lightbulb"></i>
-                    <i class="bi bi-lightbulb-fill"></i>
+                <button class="btn btn-info" type="button" onclick="switch_color()">
+                    <i id="darkModeButton" class="bi bi-lightbulb" style="font-size: large"></i>
                 </button>
             </div>
         </div>
@@ -226,21 +225,21 @@
         <!-- left side -->
         <div class="col-sm">
             <div class="rounded" id="user_table1">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table1" style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table1" style="margin-bottom: 0">
                     <caption class="text-center" id="player1"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table3">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table3" style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table3" style="margin-bottom: 0">
                     <caption class="text-center" id="player3"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table5">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table5" style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table5" style="margin-bottom: 0">
                     <caption class="text-center" id="player5"></caption>
                     <tbody class="border-primary">
                     </tbody>
@@ -324,21 +323,21 @@
         <!-- right side -->
         <div class="col-sm">
             <div class="rounded" id="user_table2">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table2" style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table2" style="margin-bottom: 0">
                     <caption class="text-center" id="player2"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table4">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table4" style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table4" style="margin-bottom: 0">
                     <caption class="text-center" id="player4"></caption>
                     <tbody class="border-primary">
                     </tbody>
                 </table>
             </div>
             <div class="rounded" id="user_table6">
-                <table class="table table-sm table-striped table-bordered border-primary caption-top" id="Table6"style="margin-bottom: 0">
+                <table class="table table-sm table-bordered border-primary caption-top" id="Table6"style="margin-bottom: 0">
                     <caption class="text-center" id="player6"></caption>
                     <tbody class="border-primary">
                     </tbody>
@@ -377,16 +376,12 @@
         let nameList = data.names;
         generatePlayerTables(nameList);
         let player = data.current_player;
-        const current_player_p = document.getElementById("current_player");
         if (!(player === "nicht gefunden!")) { // if uuid was found
-            current_player_p.innerHTML = player
             if (player === uuid_part) {
                 is_current_player = true // set variable to allow next()
                 activate_buttons()
                 document.getElementById("border_player_table").classList.add("custom_border");
             }
-        } else {
-            current_player_p.innerHTML = "Aktueller Spieler konnte nicht ermittelt werden"
         }
     });
 
@@ -525,7 +520,7 @@
                         let checkbox = document.getElementById(`${number}-${i}`);
                         checkbox.checked = true;
                     } else {
-                        let field = document.getElementById(`${uuid_part}-${number}-${i}`);
+                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
                         field.classList.add("table-success");
                     }
                 }
