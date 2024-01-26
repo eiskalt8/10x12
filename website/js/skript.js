@@ -13,14 +13,49 @@ $(document).ready(function () {
         });
         window.location.href = "mode.html";
     });
+    initPage();
+    // forwarding to game.html/room_number
+    socket.on("to_room", function (data) {
+        const room_number = data.room_number;
+        window.location.href = `/game/${room_number}`;
+    });
+
+    socket.on("error_message", function (data) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.textContent = data.message;
+        errorDiv.style.display = 'block';
+    });
+
+    $('#new_room').submit(function (event) {
+        event.preventDefault();
+
+        // sends create_room event with uuid
+        socket.emit("create_room", {
+            uuid: localStorage.getItem('uuid')
+        });
+    });
+
+    $('#join_room').submit(function (event) {
+        event.preventDefault();
+        document.getElementById('join-button').disabled = true;
+        setTimeout(function () {
+            document.getElementById('join-button').disabled = false;
+        }, 2000);
+
+        //sends join_room event room_id and uuid
+        socket.emit("join_room", {
+            room_number: document.getElementById('room_id').value,
+            uuid: localStorage.getItem('uuid')
+        });
+    });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+function initPage() {
     get_color();
     document.getElementById("darkModeButton").addEventListener("click", function () {
         switch_color();
     });
-});
+}
 
 //handle name
 function save_name() {
@@ -33,26 +68,6 @@ function save_name() {
         // UUID not in local storage
         const uuid = self.crypto.randomUUID();
         localStorage.setItem("uuid", uuid);
-    }
-}
-
-function get_name() {
-    const pElement = document.getElementById(`username`);
-    if (localStorage.getItem("username")) {
-        pElement.textContent = localStorage.getItem("username");
-    } else {
-        pElement.textContent = "Spielername fehlt!";
-    }
-}
-
-function toggleLock(diceId) {
-    const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
-    const diceElement = document.getElementById(diceId);
-
-    if (checkboxElement.checked) {
-        diceElement.classList.add("locked");
-    } else {
-        diceElement.classList.remove("locked");
     }
 }
 
@@ -81,5 +96,25 @@ function switch_color() {
     } else {
         localStorage.setItem("darkMode", "true");
         get_color();
+    }
+}
+
+function get_name() {
+    const pElement = document.getElementById(`username`);
+    if (localStorage.getItem("username")) {
+        pElement.textContent = localStorage.getItem("username");
+    } else {
+        pElement.textContent = "Spielername fehlt!";
+    }
+}
+
+function toggleLock(diceId) {
+    const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
+    const diceElement = document.getElementById(diceId);
+
+    if (checkboxElement.checked) {
+        diceElement.classList.add("locked");
+    } else {
+        diceElement.classList.remove("locked");
     }
 }
