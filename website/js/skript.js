@@ -96,26 +96,27 @@ $(document).ready(function () {
 
     // generate big table
     const tableHead = document.querySelector('#playerTable thead');
-
-    let headHtml = '<th scope="col">Zahlen</th>';
-    for (let col = 1; col <= 10; col++) {
-        headHtml += '<th scope="col">' + col + '</th>';
-    }
-    headHtml += '<th scope="col">Zahlen</th>';
-
-    tableHead.innerHTML = headHtml;
-
-    const tableBody = document.querySelector('#playerTable tbody');
-
-    for (let row = 1; row <= 12; row++) {
-        let rowHtml = '<tr><th scope="row">' + row + '</th>';
-
+    if (tableHead) {
+        let headHtml = '<th scope="col">Zahlen</th>';
         for (let col = 1; col <= 10; col++) {
-            rowHtml += '<td><input class="form-check-input" disabled type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
+            headHtml += '<th scope="col">' + col + '</th>';
         }
+        headHtml += '<th scope="col">Zahlen</th>';
 
-        rowHtml += '<th scope="row">' + row + '</th></tr>';
-        tableBody.innerHTML += rowHtml;
+        tableHead.innerHTML = headHtml;
+
+        const tableBody = document.querySelector('#playerTable tbody');
+
+        for (let row = 1; row <= 12; row++) {
+            let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+            for (let col = 1; col <= 10; col++) {
+                rowHtml += '<td><input class="form-check-input" disabled type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
+            }
+
+            rowHtml += '<th scope="row">' + row + '</th></tr>';
+            tableBody.innerHTML += rowHtml;
+        }
     }
 
     // generate other user tables
