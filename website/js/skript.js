@@ -1,13 +1,26 @@
-/*function safe_input() {
-    const input = document.getElementById(inputid).value;
-    localStorage.setItem(inputid, input);
-}
+$(document).ready(function () {
+    const socket = io();
+    socket.on("connect", function () {
+        console.log("connected");
+    });
 
-function get_input(inputid) {
-    return localStorage.getItem(inputid)
-}
-*/
+    $('form#user').submit(function (event) {
+        event.preventDefault();
+        save_name();
+        socket.emit("save_name", {
+            username: localStorage.getItem("username"),
+            uuid: localStorage.getItem("uuid")
+        });
+    });
+});
 
+document.addEventListener("DOMContentLoaded", function () {
+    get_color();
+});
+
+document.getElementById("darkModeButton").addEventListener("click", function () {
+    switch_color();
+});
 //handle name
 function save_name() {
     const name = document.getElementById("username-input").value
