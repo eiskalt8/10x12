@@ -402,7 +402,7 @@
             if (tableBody.children.length === 0) {
                 // switch id of table border to uuid_part
                 const tableBorder = document.getElementById(`user_table${i}`);
-                tableBorder.id = names[i - 1][1]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
+                tableBorder.id = "uuid-" + names[i - 1][1]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
                 // set caption of table to name
                 const tableCaption = document.querySelector(`#Table${i} caption`);
                 tableCaption.innerHTML = names[i - 1][0]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
@@ -530,7 +530,7 @@
                         let checkbox = document.getElementById(`${number}-${i}`);
                         checkbox.checked = true;
                     } else {
-                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
+                        let field = document.getElementById(`${uuid_part}-${number}-${i}`);
                         field.classList.add("table-success");
                     }
                 }
@@ -548,14 +548,14 @@
         }
         for (let i = 0; i <= userlist.length - 1; i++) {
             console.log(userlist.length - 1, userlist[i]);
-            if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
-                document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
+            if (document.getElementById(`uuid- + ${userlist[i]}`).classList.contains("custom_border")) {
+                document.getElementById(`uuid- + ${userlist[i]}`).classList.remove("custom_border");
                 console.log("removed border for" + userlist[i]);
             } else {
                 console.log("nothing removed");
             }
             if (userlist[i] === current_player) {
-                document.getElementById(`${userlist[i]}`).classList.add("custom_border");
+                document.getElementById(`uuid- + ${userlist[i]}`).classList.add("custom_border");
                 console.log("added border for" + userlist[i] + current_player);
             } else {
                 console.log("nothing added");
