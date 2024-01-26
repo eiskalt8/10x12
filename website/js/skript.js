@@ -58,31 +58,143 @@ $(document).ready(function () {
             uuid: localStorage.getItem('uuid')
         });
     });
-    // triggering join_room at reload and joining
-    socket.emit('join_room', {
-        room_number: room_number,
-        uuid: uuid
-    });
-    // for only get current dices at reload and joining
-    socket.emit('dices', {
-        room_number: room_number,
-        uuid: uuid,
-        dices: false,
-        locked_dices: false
-    });
-    setTimeout(function () {
-        // for showing the scores at reload and joining
-        socket.emit('new_score', {
+
+    if (window.location.href.includes("game")) {
+        // triggering join_room at reload and joining
+        socket.emit('join_room', {
+            room_number: room_number,
+            uuid: uuid
+        });
+        // for only get current dices at reload and joining
+        socket.emit('dices', {
             room_number: room_number,
             uuid: uuid,
-            score: false
+            dices: false,
+            locked_dices: false
         });
-        // for showing the current player border at reload and joining
-        socket.emit('next_player', {
-            room_number: room_number,
-            uuid: uuid,
+        setTimeout(function () {
+            // for showing the scores at reload and joining
+            socket.emit('new_score', {
+                room_number: room_number,
+                uuid: uuid,
+                score: false
+            });
+            // for showing the current player border at reload and joining
+            socket.emit('next_player', {
+                room_number: room_number,
+                uuid: uuid,
+            });
+        }, 2000);
+
+        // generate big table
+        const tableHead = document.querySelector('#playerTable thead');
+        if (tableHead) {
+            let headHtml = '<th scope="col">Zahlen</th>';
+            for (let col = 1; col <= 10; col++) {
+                headHtml += '<th scope="col">' + col + '</th>';
+            }
+            headHtml += '<th scope="col">Zahlen</th>';
+
+            tableHead.innerHTML = headHtml;
+
+            const tableBody = document.querySelector('#playerTable tbody');
+
+            for (let row = 1; row <= 12; row++) {
+                let rowHtml = '<tr><th scope="row">' + row + '</th>';
+
+                for (let col = 1; col <= 10; col++) {
+                    rowHtml += '<td><input class="form-check-input" disabled type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
+                }
+
+                rowHtml += '<th scope="row">' + row + '</th></tr>';
+                tableBody.innerHTML += rowHtml;
+            }
+        }
+
+        // generate other user tables
+        socket.on('update_amount_tables', function (data) {
+            let nameList = data.names;
+            generatePlayerTables(nameList);
+            let player = data.current_player;
+            if (!(player === "nicht gefunden!")) { // if uuid was found
+                if (player === uuid_part) {
+                    is_current_player = true // set variable to allow next()
+                    activate_buttons()
+                    document.getElementById("border_player_table").classList.add("custom_border");
+                }
+            }
         });
-    }, 2000);
+
+        socket.on('new_next_player', function (data) {
+            let userlist = data.userlist;
+            let currentPlayer = data.current_player;
+            diceIds.forEach(diceId => {
+                const diceElement = document.getElementById(diceId);
+                diceElement.classList.remove('locked');
+            });
+            for (let i = 1; i <= 6; i++) {
+                const checkbox = document.getElementById(`lock${i}`);
+                checkbox.checked = false;
+                checkbox.parentElement.classList.remove('active');
+            }
+            if (currentPlayer === uuid_part) {
+                is_current_player = true;
+                activate_buttons()
+            }
+            // set custom_border
+            change_custom_border(userlist, currentPlayer)
+        });
+
+        socket.on('new_dices', function (data) {
+            const new_dices = data.new_dices;
+            const locked_dices = data.locked_dices;
+
+            diceIds.forEach(diceId => {
+                const diceElement = document.getElementById(diceId);
+                diceElement.classList.remove('locked');
+                if (locked_dices && locked_dices.includes(diceId)) {
+                    diceElement.classList.add('locked');
+                }
+                if (!diceElement.classList.contains('locked')) {
+                    diceElement.classList.add('rolling');
+                    setTimeout(() => {
+                        diceElement.classList.remove('rolling');
+                        diceElement.className = `bi bi-dice-${new_dices[diceId.charAt(4)]} dice`;
+                    }, 500);// Wait in Millisec
+                }
+            });
+        });
+
+        socket.on('new_scores', function (data) {
+            let new_scores = JSON.parse(data.new_scores);
+            for (let uuid_part_ in new_scores) {
+                for (let number in new_scores[uuid_part_]) {
+                    // disable checkboxes and remove all success
+                    for (let i = 1; i <= 10; i++) {
+                        if (uuid_part_ === uuid_part) {
+                            let checkbox = document.getElementById(`${number}-${i}`);
+                            checkbox.checked = false;
+                        } else {
+                            let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
+                            if (field.classList.contains("table-success")) {
+                                field.classList.remove("table-success");
+                            }
+                        }
+                    }
+                    // show new scores
+                    for (let i = 1; i <= new_scores[uuid_part_][number]; i++) {
+                        if (uuid_part_ === uuid_part) {
+                            let checkbox = document.getElementById(`${number}-${i}`);
+                            checkbox.checked = true;
+                        } else {
+                            let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
+                            field.classList.add("table-success");
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     socket.on('room_locked', function (data) {
         if ('message' in data) {
@@ -94,114 +206,6 @@ $(document).ready(function () {
         room_locked = true
     });
 
-    // generate big table
-    const tableHead = document.querySelector('#playerTable thead');
-    if (tableHead) {
-        let headHtml = '<th scope="col">Zahlen</th>';
-        for (let col = 1; col <= 10; col++) {
-            headHtml += '<th scope="col">' + col + '</th>';
-        }
-        headHtml += '<th scope="col">Zahlen</th>';
-
-        tableHead.innerHTML = headHtml;
-
-        const tableBody = document.querySelector('#playerTable tbody');
-
-        for (let row = 1; row <= 12; row++) {
-            let rowHtml = '<tr><th scope="row">' + row + '</th>';
-
-            for (let col = 1; col <= 10; col++) {
-                rowHtml += '<td><input class="form-check-input" disabled type="checkbox" id="' + row + '-' + col + '" style="border-color: var(--bs-primary)"></td>';
-            }
-
-            rowHtml += '<th scope="row">' + row + '</th></tr>';
-            tableBody.innerHTML += rowHtml;
-        }
-    }
-
-    // generate other user tables
-    socket.on('update_amount_tables', function (data) {
-        let nameList = data.names;
-        generatePlayerTables(nameList);
-        let player = data.current_player;
-        if (!(player === "nicht gefunden!")) { // if uuid was found
-            if (player === uuid_part) {
-                is_current_player = true // set variable to allow next()
-                activate_buttons()
-                document.getElementById("border_player_table").classList.add("custom_border");
-            }
-        }
-    });
-
-    socket.on('new_next_player', function (data) {
-        let userlist = data.userlist;
-        let currentPlayer = data.current_player;
-        diceIds.forEach(diceId => {
-            const diceElement = document.getElementById(diceId);
-            diceElement.classList.remove('locked');
-        });
-        for (let i = 1; i <= 6; i++) {
-            const checkbox = document.getElementById(`lock${i}`);
-            checkbox.checked = false;
-            checkbox.parentElement.classList.remove('active');
-        }
-        if (currentPlayer === uuid_part) {
-            is_current_player = true;
-            activate_buttons()
-        }
-        // set custom_border
-        change_custom_border(userlist, currentPlayer)
-    });
-
-    socket.on('new_dices', function (data) {
-        const new_dices = data.new_dices;
-        const locked_dices = data.locked_dices;
-
-        diceIds.forEach(diceId => {
-            const diceElement = document.getElementById(diceId);
-            diceElement.classList.remove('locked');
-            if (locked_dices && locked_dices.includes(diceId)) {
-                diceElement.classList.add('locked');
-            }
-            if (!diceElement.classList.contains('locked')) {
-                diceElement.classList.add('rolling');
-                setTimeout(() => {
-                    diceElement.classList.remove('rolling');
-                    diceElement.className = `bi bi-dice-${new_dices[diceId.charAt(4)]} dice`;
-                }, 500);// Wait in Millisec
-            }
-        });
-    });
-
-    socket.on('new_scores', function (data) {
-        let new_scores = JSON.parse(data.new_scores);
-        for (let uuid_part_ in new_scores) {
-            for (let number in new_scores[uuid_part_]) {
-                // disable checkboxes and remove all success
-                for (let i = 1; i <= 10; i++) {
-                    if (uuid_part_ === uuid_part) {
-                        let checkbox = document.getElementById(`${number}-${i}`);
-                        checkbox.checked = false;
-                    } else {
-                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
-                        if (field.classList.contains("table-success")) {
-                            field.classList.remove("table-success");
-                        }
-                    }
-                }
-                // show new scores
-                for (let i = 1; i <= new_scores[uuid_part_][number]; i++) {
-                    if (uuid_part_ === uuid_part) {
-                        let checkbox = document.getElementById(`${number}-${i}`);
-                        checkbox.checked = true;
-                    } else {
-                        let field = document.getElementById(`${uuid_part_}-${number}-${i}`);
-                        field.classList.add("table-success");
-                    }
-                }
-            }
-        }
-    });
 
     socket.on('disconnect', function () {
         console.log("disconnected")
