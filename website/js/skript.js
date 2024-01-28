@@ -28,12 +28,14 @@ $(document).ready(function () {
         window.location.href = "mode.html";
     });
     initPage();
-    // forwarding to game.html/room_number
-    socket.on("to_room", function (data) {
-        const room_number = data.room_number;
-        window.location.href = `/game/${room_number}`;
-    });
 
+    if (window.location.href.includes("game") === false ) {
+        // forwarding to game.html/room_number
+        socket.on("to_room", function (data) {
+            const room_number = data.room_number;
+            window.location.href = `/game/${room_number}`;
+        });
+    }
     socket.on("error_message", function (data) {
         const errorDiv = document.getElementById('error-message');
         errorDiv.textContent = data.message;
@@ -66,7 +68,7 @@ $(document).ready(function () {
     if (window.location.href.includes("game")) {
         // TODO  find a way for fixing reload site
         // triggering join_room at reload and joining
-        /*socket.emit('join_room', {
+        socket.emit('join_room', {
             room_number: room_number,
             uuid: uuid
         });
@@ -89,7 +91,7 @@ $(document).ready(function () {
                 room_number: room_number,
                 uuid: uuid,
             });
-        }, 2000);*/
+        }, 2000);
 
         // generate big table
         const tableHead = document.querySelector('#playerTable thead');
