@@ -63,7 +63,6 @@ $(document).ready(function () {
     });
 
     if (window.location.href.includes("game")) {
-        // TODO  find a way for fixing reload site
         let room_number = window.location.pathname
         room_number = room_number.split('/')
         room_number = room_number[2]
@@ -91,6 +90,7 @@ $(document).ready(function () {
             socket.emit('next_player', {
                 room_number: room_number,
                 uuid: uuid,
+                clicked: false
             });
         }, 2000);
 
@@ -359,6 +359,7 @@ function next() {
         socket.emit('next_player', {
             room_number: room_number,
             uuid: uuid,
+            clicked: true
         });
         let score = get_score()
         socket.emit('new_score', {

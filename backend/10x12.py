@@ -223,6 +223,7 @@ def lock_room(data):
 def next_player(data):
     room_number = data['room_number']
     uuid = data['uuid']
+    clicked = data['clicked']
 
     conn = connect_to_db()
     cursor = conn.cursor()
@@ -234,7 +235,7 @@ def next_player(data):
             user = result[0]
             user_list = user.split(",")
             current_player = result[1]
-            if uuid == current_player:
+            if uuid == current_player and clicked is True:
                 index = user_list.index(current_player)
                 if index == len(user_list) - 1:
                     next_player_index = 0
@@ -249,8 +250,7 @@ def next_player(data):
                 userlist = [user[:8] for user in user_list]
 
                 emit("new_next_player", {'current_player': current_player, 'userlist': userlist}, broadcast=True,
-                     include_self=True,
-                     to=room_number)
+                     include_self=True, to=room_number)
             else:
                 # requester is not current_player and therefore only get current data
                 # shorten uuids before emit
