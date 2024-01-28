@@ -22,7 +22,6 @@ $(document).ready(function () {
         });
         window.location.href = "mode.html";
     });
-    initPage();
 
     if (window.location.href.includes("game") === false) {
         // forwarding to game.html/room_number
