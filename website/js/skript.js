@@ -202,202 +202,6 @@ $(document).ready(function () {
                 }
             }
         });
-
-        function toggleLock(diceId) {
-            const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
-            const diceElement = document.getElementById(diceId);
-
-            if (checkboxElement.checked) {
-                diceElement.classList.add("locked");
-            } else {
-                diceElement.classList.remove("locked");
-            }
-        }
-
-        function rollDice() {
-            let dices = {};
-            let locked_dices = [];
-            let completed = 0
-            document.getElementById('würfel').disabled = true;
-            if (is_current_player === true) {
-                // need to lock the room?
-                if (room_locked === false) {
-                    socket.emit('lock_room', {
-                        room_number: room_number
-                    });
-                }
-                let score = get_score()
-                socket.emit('new_score', {
-                    room_number: room_number,
-                    uuid: uuid,
-                    score: score
-                });
-
-                setTimeout(function () {
-                    document.getElementById('würfel').disabled = false;
-                }, 2000);
-
-                diceIds.forEach(diceId => {
-                    const diceElement = document.getElementById(diceId);
-                    if (!diceElement.classList.contains('locked')) {
-                        diceElement.classList.add('rolling');
-                        setTimeout(() => {
-                            if (diceElement.classList.contains('rolling')) {
-                                const randomNumber = Math.floor(Math.random() * 6) + 1;
-                                diceElement.classList.remove('rolling');
-                                diceElement.className = `bi bi-dice-${randomNumber} dice`;
-                                dices[diceId.charAt(4)] = randomNumber;
-
-                                completed++
-
-                                if (completed === diceIds.length) {
-                                    socket.emit('dices', {
-                                        room_number: room_number,
-                                        uuid: uuid,
-                                        dices: dices,
-                                        locked_dices: locked_dices
-                                    });
-                                }
-                            }
-                        }, 500);// Wait in Millisec
-                    } else {
-                        locked_dices.push(diceId);
-                        completed++
-
-                        if (completed === diceIds.length) {
-                            socket.emit('dices', {
-                                room_number: room_number,
-                                uuid: uuid,
-                                dices: dices,
-                                locked_dices: locked_dices
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        function next() {
-            deactivate_buttons()
-            if (is_current_player === true) {
-                socket.emit('next_player', {
-                    room_number: room_number,
-                    uuid: uuid,
-                });
-                let score = get_score()
-                socket.emit('new_score', {
-                    room_number: room_number,
-                    uuid: uuid,
-                    score: score
-                });
-                is_current_player = false;
-            }
-        }
-
-        function generatePlayerTables(nameList) {
-            const ownuuid_part = uuid.substring(0, 8);
-            let names = nameList.filter(user => user[1] !== ownuuid_part); // removing own username
-            let numPlayers = names.length;
-
-            for (let i = 1; i <= numPlayers; i++) {
-                const tableBody = document.querySelector(`#Table${i} tbody`);
-
-                if (tableBody.children.length === 0) {
-                    // switch id of table border to uuid_part
-                    const tableBorder = document.getElementById(`user_table${i}`);
-                    tableBorder.id = names[i - 1][1]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
-                    // set caption of table to name
-                    const tableCaption = document.querySelector(`#Table${i} caption`);
-                    tableCaption.innerHTML = names[i - 1][0]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
-
-                    for (let row = 1; row <= 12; row++) {
-                        let rowHtml = `<tr><th scope="row">${row}</th>`;
-
-                        for (let col = 1; col <= 10; col++) {
-                            rowHtml += `<td id="${names[i - 1][1]}-${row}-${col}"></td>`;
-                        }
-
-                        rowHtml += `<th scope="row">${row}</th></tr>`;
-                        tableBody.innerHTML += rowHtml;
-                    }
-                }
-            }
-        }
-
-        function activate_buttons() {
-            if (is_current_player === true) {
-                document.getElementById('würfel').disabled = false;
-                document.getElementById('next').disabled = false;
-                for (let i = 1; i <= 6; i++) {
-                    document.getElementById(`lock${i}`).disabled = false;
-                }
-                for (let row = 1; row <= 12; row++) {
-                    for (let col = 1; col <= 10; col++) {
-                        document.getElementById(`${row}-${col}`).disabled = false;
-                        document.getElementById(`${row}-${col}`).parentElement.classList.add('active');
-                    }
-                }
-            }
-        }
-
-        function deactivate_buttons() {
-            document.getElementById('next').disabled = true;
-            document.getElementById('würfel').disabled = true;
-            for (let i = 1; i <= 6; i++) {
-                document.getElementById(`lock${i}`).disabled = true;
-            }
-            for (let row = 1; row <= 12; row++) {
-                for (let col = 1; col <= 10; col++) {
-                    document.getElementById(`${row}-${col}`).disabled = true;
-                    document.getElementById(`${row}-${col}`).parentElement.classList.remove('active');
-                }
-            }
-        }
-
-        function get_score() {
-            let score = {
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0,
-                "6": 0,
-                "7": 0,
-                "8": 0,
-                "9": 0,
-                "10": 0,
-                "11": 0,
-                "12": 0
-            }
-            for (let number in score) {
-                for (let i = 1; i <= 10; i++) {
-                    let checkbox = document.getElementById(`${number}-${i}`)
-                    if (checkbox.checked) {
-                        score[number] = score[number] + 1;
-                    }
-                }
-            }
-            return score
-        }
-
-        function change_custom_border(userlist, current_player) {
-            userlist.splice(userlist.indexOf(uuid_part), 1); // remove own uuid_part
-            if (is_current_player === true) {
-                document.getElementById("border_player_table").classList.add("custom_border");
-            } else {
-                if (document.getElementById("border_player_table").classList.contains("custom_border")) {
-                    document.getElementById("border_player_table").classList.remove("custom_border");
-                }
-            }
-            for (let i = 0; i <= userlist.length - 1; i++) {
-                if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
-                    document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
-                }
-                if (userlist[i] === current_player) {
-                    document.getElementById(`${userlist[i]}`).classList.add("custom_border");
-                }
-            }
-        }
     }
 
     socket.on('room_locked', function (data) {
@@ -472,5 +276,188 @@ function get_name() {
         pElement.textContent = localStorage.getItem("username");
     } else {
         pElement.textContent = "Spielername fehlt!";
+    }
+}
+
+function toggleLock(diceId) {
+    const checkboxElement = document.getElementById(`lock${diceId.charAt(diceId.length - 1)}`);
+    const diceElement = document.getElementById(diceId);
+
+    if (checkboxElement.checked) {
+        diceElement.classList.add("locked");
+    } else {
+        diceElement.classList.remove("locked");
+    }
+}
+
+function rollDice() {
+    let dices = {};
+    let locked_dices = [];
+    let completed = 0
+    document.getElementById('würfel').disabled = true;
+    if (is_current_player === true) {
+        // need to lock the room?
+        if (room_locked === false) {
+            socket.emit('lock_room', {
+                room_number: room_number
+            });
+        }
+        let score = get_score()
+        socket.emit('new_score', {
+            room_number: room_number,
+            uuid: uuid,
+            score: score
+        });
+
+        setTimeout(function () {
+            document.getElementById('würfel').disabled = false;
+        }, 2000);
+
+        diceIds.forEach(diceId => {
+            const diceElement = document.getElementById(diceId);
+            if (!diceElement.classList.contains('locked')) {
+                diceElement.classList.add('rolling');
+                setTimeout(() => {
+                    if (diceElement.classList.contains('rolling')) {
+                        const randomNumber = Math.floor(Math.random() * 6) + 1;
+                        diceElement.classList.remove('rolling');
+                        diceElement.className = `bi bi-dice-${randomNumber} dice`;
+                        dices[diceId.charAt(4)] = randomNumber;
+
+                        completed++
+
+                        if (completed === diceIds.length) {
+                            socket.emit('dices', {
+                                room_number: room_number,
+                                uuid: uuid,
+                                dices: dices,
+                                locked_dices: locked_dices
+                            });
+                        }
+                    }
+                }, 500);// Wait in Millisec
+            } else {
+                locked_dices.push(diceId);
+                completed++
+
+                if (completed === diceIds.length) {
+                    socket.emit('dices', {
+                        room_number: room_number,
+                        uuid: uuid,
+                        dices: dices,
+                        locked_dices: locked_dices
+                    });
+                }
+            }
+        });
+    }
+}
+
+function next() {
+    deactivate_buttons()
+    if (is_current_player === true) {
+        socket.emit('next_player', {
+            room_number: room_number,
+            uuid: uuid,
+        });
+        let score = get_score()
+        socket.emit('new_score', {
+            room_number: room_number,
+            uuid: uuid,
+            score: score
+        });
+        is_current_player = false;
+    }
+}
+
+function generatePlayerTables(nameList) {
+    const ownuuid_part = uuid.substring(0, 8);
+    let names = nameList.filter(user => user[1] !== ownuuid_part); // removing own username
+    let numPlayers = names.length;
+
+    for (let i = 1; i <= numPlayers; i++) {
+        const tableBody = document.querySelector(`#Table${i} tbody`);
+
+        if (tableBody.children.length === 0) {
+            // switch id of table border to uuid_part
+            const tableBorder = document.getElementById(`user_table${i}`);
+            tableBorder.id = names[i - 1][1]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
+            // set caption of table to name
+            const tableCaption = document.querySelector(`#Table${i} caption`);
+            tableCaption.innerHTML = names[i - 1][0]; // array starts at 1, i at 1 / [[name, uuidpart],[name, uuidpart]]
+
+            for (let row = 1; row <= 12; row++) {
+                let rowHtml = `<tr><th scope="row">${row}</th>`;
+
+                for (let col = 1; col <= 10; col++) {
+                    rowHtml += `<td id="${names[i - 1][1]}-${row}-${col}"></td>`;
+                }
+
+                rowHtml += `<th scope="row">${row}</th></tr>`;
+                tableBody.innerHTML += rowHtml;
+            }
+        }
+    }
+}
+
+function activate_buttons() {
+    if (is_current_player === true) {
+        document.getElementById('würfel').disabled = false;
+        document.getElementById('next').disabled = false;
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById(`lock${i}`).disabled = false;
+        }
+        for (let row = 1; row <= 12; row++) {
+            for (let col = 1; col <= 10; col++) {
+                document.getElementById(`${row}-${col}`).disabled = false;
+                document.getElementById(`${row}-${col}`).parentElement.classList.add('active');
+            }
+        }
+    }
+}
+
+function deactivate_buttons() {
+    document.getElementById('next').disabled = true;
+    document.getElementById('würfel').disabled = true;
+    for (let i = 1; i <= 6; i++) {
+        document.getElementById(`lock${i}`).disabled = true;
+    }
+    for (let row = 1; row <= 12; row++) {
+        for (let col = 1; col <= 10; col++) {
+            document.getElementById(`${row}-${col}`).disabled = true;
+            document.getElementById(`${row}-${col}`).parentElement.classList.remove('active');
+        }
+    }
+}
+
+function get_score() {
+    let score = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0}
+    for (let number in score) {
+        for (let i = 1; i <= 10; i++) {
+            let checkbox = document.getElementById(`${number}-${i}`)
+            if (checkbox.checked) {
+                score[number] = score[number] + 1;
+            }
+        }
+    }
+    return score
+}
+
+function change_custom_border(userlist, current_player) {
+    userlist.splice(userlist.indexOf(uuid.substring(0, 8)), 1); // remove own uuid_part
+    if (is_current_player === true) {
+        document.getElementById("border_player_table").classList.add("custom_border");
+    } else {
+        if (document.getElementById("border_player_table").classList.contains("custom_border")) {
+            document.getElementById("border_player_table").classList.remove("custom_border");
+        }
+    }
+    for (let i = 0; i <= userlist.length - 1; i++) {
+        if (document.getElementById(`${userlist[i]}`).classList.contains("custom_border")) {
+            document.getElementById(`${userlist[i]}`).classList.remove("custom_border");
+        }
+        if (userlist[i] === current_player) {
+            document.getElementById(`${userlist[i]}`).classList.add("custom_border");
+        }
     }
 }
