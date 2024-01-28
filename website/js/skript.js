@@ -1,9 +1,13 @@
 const socket = io();
-let room_number = window.location.pathname
-room_number = room_number.split('/')
-room_number = room_number[2]
+if (window.location.href.includes("game")) {
+    let room_number = window.location.pathname
+    room_number = room_number.split('/')
+    room_number = room_number[2]
+}
 const uuid = localStorage.getItem('uuid')
-const uuid_part = uuid.substring(0, 8)
+if (uuid) {
+    const uuid_part = uuid.substring(0, 8)
+}
 const username = localStorage.getItem('username')
 let room_locked = false
 let is_current_player = false
