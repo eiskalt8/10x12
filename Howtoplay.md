@@ -40,17 +40,17 @@ Bei diesem Würfelergebnis gibt es nun folgende Möglichkeiten weiter zu machen:
 Nun muss man sich für **eine Zahl** aus den Möglichkeiten **entscheiden** und auf diese würfelt man den **Rest seines Zuges weiter.**
 - setze nun entsprechend viele Kreuze bei der ausgesuchten Zahl (in diesem Fall würden die Zahlen, die zweimal vorhanden sind mehr Sinn ergeben, also: 4,5,9,10)
 
-![grafik](https://github.com/eiskalt8/10x12/assets/148712910/ced40ba1-a292-446f-adde-fb1936b31414)
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/ced40ba1-a292-446f-adde-fb1936b31414)  
 (in diesem Fall bei der vier)
 
 - sperre nun alle Würfel, die du für die Kreuze verbraucht hast
 
-![grafik](https://github.com/eiskalt8/10x12/assets/148712910/62b4d9db-2dfc-4c44-8e8e-6cfff6356f41)
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/62b4d9db-2dfc-4c44-8e8e-6cfff6356f41)  
 (die zwei vieren)
 
 - nun kannst du das zweite Mal mit den verbleibenen Würfeln weiter machen und auf "Würfeln" klicken
 
-![grafik](https://github.com/eiskalt8/10x12/assets/148712910/60b4ea10-f615-4722-a19c-6ef2ab09a99f)
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/60b4ea10-f615-4722-a19c-6ef2ab09a99f)  
 (zweiter Wurf)
 
 **pro Wurf muss immer mindestens einmal die gewählte Zahl abkreuzbar sein**  
@@ -58,7 +58,34 @@ Hier ist keine weitere vier dabei, nun ist der Zug vorbei und ich muss per "Weit
 Wenn ich **wieder an der Reihe** bin, geht es von vorne los und ich kann mich **nach dem Würfeln auf eine neue Zahl** festlegen.
 
 ## Eine Reihe wird voll
+Wenn eine Reihe voll wird, wie im folgenden Beispiel:
 
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/1e505539-a72f-44fa-a3f4-10fc37dcb197)  
+(zwei vieren gewürfelt und es fehlen nur noch zwei)
 
+**wenn eine Reihe in einem Zug voll wird, darf der Spieler mit allen Würfeln neu würfeln und eine neue Zahl auswählen**  
+In diesem Fall werden nun die letzten Kreuze bei der vier gesetzt und alle Würfel wieder entsperrt:
+
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/06cd913c-ad78-4925-981e-f7b6fb1d45b6)  
+(es kann wieder neu gewürfelt werden)
+
+Jetzt wird wieder neu gewürfelt, bis der Spieler pro Wurf nicht mehr ein Kreuz bei der ausgewählten Zahl machen kann.
+
+## Ende
+Wenn ein Spieler seine Tabelle voll hat:  
+
+![grafik](https://github.com/eiskalt8/10x12/assets/148712910/4e98ec56-99ab-4547-835e-e99e553b680a)  
+(nur noch eine sechs fehlt und die wurde gewürfelt)  
+
+Der Spieler kann nun das letzte Kreuz setzen und auf "Weiter" klicken, der Spieler hat gewonnen und die anderen Mitspieler sehen die vollendete Tabelle.  
+Nun könnten die anderen Spieler noch um die weiteren Plazierungen spielen wenn sie wollen, oder das Spiel schließen.  
+
+## **Dinge, die nicht gemacht werden sollten**
+- auf "Würfeln" klicken, obwohl noch nicht alle Spieler im Raum sind (es gibt keine Möglichkeit einen Raum wieder zu entsperren!)
+- Würfel nicht zu sperren, obwohl man sie in der Tabelle für Kreuze benötigt hat (die Würfel werden erneut gewürfelt und verfälschen das Ergebnis!)
+- mehr abkreuzen, als man eigentlich gewürfelt hat (den anderen Spieler werden die Kreuze und Würfel nach jeder Aktion angezeigt und können Betrug ganz leicht erkennen!)
+- "Weiter" klichen, obwohl man mit seinem Zug noch nicht zu Ende ist (man verschenkt einen kompletten Zug!)
+- Einen Spielraum zu verlassen, obwohl andere noch weiter spielen wollen (es gibt keine Möglichkeit den aktuellen Spieler zu überspringen!)
+- den Local Storage für die Seite leeren, da man dann seine UUID verliert und sich gegenüber dem Server nicht mehr legitimieren kann (Spielräumen mit der alten UUID kann man nicht mehr beitreten!)
 
 # How to Play (English)
