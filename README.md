@@ -12,5 +12,5 @@ If you want to change something, feel free to contribute to this Project and let
 will be created and found in the repo, maybe also added with a button to the game itself.
 
 ## License
-
+MIT with Commons Clause, please read before use!
 [License](../master/LICENSE)
