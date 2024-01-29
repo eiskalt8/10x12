@@ -41,7 +41,8 @@ Nun muss man sich für **eine Zahl** aus den Möglichkeiten **entscheiden** und 
 - setze nun entsprechend viele Kreuze bei der ausgesuchten Zahl (in diesem Fall würden die Zahlen, die zweimal vorhanden sind mehr Sinn ergeben, also: 4,5,9,10)
 
 ![grafik](https://github.com/eiskalt8/10x12/assets/148712910/ced40ba1-a292-446f-adde-fb1936b31414)  
-(in diesem Fall bei der vier)
+(in diesem Fall bei der vier)  
+**Die Kreuze werden von links nach rechts entsprechend der Häufigkeit gesetzt, also zwei mal die vier -> zwei Kreuze bei der vier**
 
 - sperre nun alle Würfel, die du für die Kreuze verbraucht hast
 
@@ -69,7 +70,7 @@ In diesem Fall werden nun die letzten Kreuze bei der vier gesetzt und alle Würf
 ![grafik](https://github.com/eiskalt8/10x12/assets/148712910/06cd913c-ad78-4925-981e-f7b6fb1d45b6)  
 (es kann wieder neu gewürfelt werden)
 
-Jetzt wird wieder neu gewürfelt, bis der Spieler pro Wurf nicht mehr ein Kreuz bei der ausgewählten Zahl machen kann.
+Jetzt wird wieder neu gewürfelt, bis der Spieler pro Wurf nicht mehr ein Kreuz bei **der ausgewählten Zahl** machen kann.
 
 ## Ende
 Wenn ein Spieler seine Tabelle voll hat:  
@@ -84,8 +85,7 @@ Nun könnten die anderen Spieler noch um die weiteren Plazierungen spielen wenn 
 - auf "Würfeln" klicken, obwohl noch nicht alle Spieler im Raum sind (es gibt keine Möglichkeit einen Raum wieder zu entsperren!)
 - Würfel nicht zu sperren, obwohl man sie in der Tabelle für Kreuze benötigt hat (die Würfel werden erneut gewürfelt und verfälschen das Ergebnis!)
 - mehr abkreuzen, als man eigentlich gewürfelt hat (den anderen Spieler werden die Kreuze und Würfel nach jeder Aktion angezeigt und können Betrug ganz leicht erkennen!)
-- "Weiter" klichen, obwohl man mit seinem Zug noch nicht zu Ende ist (man verschenkt einen kompletten Zug!)
 - Einen Spielraum zu verlassen, obwohl andere noch weiter spielen wollen (es gibt keine Möglichkeit den aktuellen Spieler zu überspringen!)
-- den Local Storage für die Seite leeren, da man dann seine UUID verliert und sich gegenüber dem Server nicht mehr legitimieren kann (Spielräumen mit der alten UUID kann man nicht mehr beitreten!)
+- den Local Storage / Browserdaten für die Seite löschen, da man dann seine UUID verliert und sich gegenüber dem Server nicht mehr legitimieren kann (Spielräumen mit der alten UUID kann man nicht mehr beitreten!)
 
 # How to Play (English)
