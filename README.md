@@ -3,7 +3,7 @@
 Currently I study Business Informatics in Germany and for a modul we should code a webproject and write a documentation about it and yeah here it is ;-). I'm still learning programming, therefore please don't judge my skill or way of coding.
 
 ## Infrastructure
-I used an nginx as a reverse Proxy for a Gunicorn Webserver, which hosts the flask application. This Project is currently available under [10x12.run.place](hhtps://10x12.run.place)
+I used an nginx as a reverse Proxy for a Gunicorn Webserver, which hosts the flask application. This Project is currently available under [10x12.run.place](https://10x12.run.place)
 
 ## Contributing
 If you want to change something, feel free to contribute to this Project and let us make this game more fun for everyone. **The license will stay the same, so be aware of handing over your created code!**
