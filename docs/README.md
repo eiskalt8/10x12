@@ -1,4 +1,6 @@
-# Spielanleitung (German)
+# Spielanleitung
+**(German, English below)**  
+
 Für ein besseres Verständnis wird folgendes empfohlen:
 
 - Öffne [10x12.run.place](https://10x12.run.place)  
