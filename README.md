@@ -9,7 +9,7 @@ I used an nginx as a reverse proxy for a gunicorn web server which hosts the fla
 If you want to change something, feel free to contribute to this project and let us make this game more fun for everyone. **The license will remain the same, so be aware of giving away your created code!**.
 
 ## How to play?
-will be created and found in the repo, maybe with a button added to the game itself.
+[CLick Here](../master/Howtoplay.md) or look on the main page.
 
 ## License
 MIT with Commons Clause, please read before use!
