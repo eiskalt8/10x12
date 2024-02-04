@@ -353,16 +353,16 @@ function rollDice() {
 function next() {
     deactivate_buttons()
     if (is_current_player === true) {
-        socket.emit('next_player', {
-            room_number: room_number,
-            uuid: uuid,
-            clicked: true
-        });
         let score = get_score()
         socket.emit('new_score', {
             room_number: room_number,
             uuid: uuid,
             score: score
+        });
+        socket.emit('next_player', {
+            room_number: room_number,
+            uuid: uuid,
+            clicked: true
         });
         is_current_player = false;
     }
