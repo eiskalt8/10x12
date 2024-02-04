@@ -6,7 +6,7 @@ Für ein besseres Verständnis wird folgendes empfohlen:
 - Öffne [10x12.run.place](https://10x12.run.place)  
 - (Wenn du es eher dunkler magst, kannst du oben rechts auf die Glühbirne klicken und den Darkmode der Seite aktivieren!) 
 - Gib deinen Spielernamen ein und klicke dann auf "Weiter".  
-- Nun siehst du die Auswahl zwischen "Spiel erstellen" und Raum "Beitreten". Am Besten erstellst du dir erstmal ein Spielraum.
+- Nun siehst du die Auswahl zwischen "Spiel erstellen" und Raum "Beitreten". Am Besten erstellst du dir erstmal einen Spielraum.
 
 Die <ins>**sechstellige Raumnummer**</ins> für andere Spieler siehst du oben in der Adresszeile **hinter "10x12.run.place/game/"**  
 Dann siehst du schon deine Spieltabelle (dein Name wird darüber angezeigt). Du bist der Spieler, der aktuell an der Reihe ist, dies erkennst du an dem grünen Rahmen um deine Tabelle.  
