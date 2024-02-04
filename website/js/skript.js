@@ -96,7 +96,7 @@ $(document).ready(function () {
         if (tableHead) {
             let headHtml = '<th scope="col">Zahlen</th>';
             for (let col = 1; col <= 10; col++) {
-                headHtml += '<th scope="col">' + col + '</th>';
+                headHtml += '<th scope="col">' + col + 'x</th>';
             }
             headHtml += '<th scope="col">Zahlen</th>';
 
@@ -347,6 +347,7 @@ function rollDice() {
                 }
             }
         });
+        activate_lockboxes();
     }
 }
 
@@ -402,9 +403,6 @@ function activate_buttons() {
     if (is_current_player === true) {
         document.getElementById('würfel').disabled = false;
         document.getElementById('next').disabled = false;
-        for (let i = 1; i <= 6; i++) {
-            document.getElementById(`lock${i}`).disabled = false;
-        }
         for (let row = 1; row <= 12; row++) {
             for (let col = 1; col <= 10; col++) {
                 document.getElementById(`${row}-${col}`).disabled = false;
@@ -425,6 +423,12 @@ function deactivate_buttons() {
             document.getElementById(`${row}-${col}`).disabled = true;
             document.getElementById(`${row}-${col}`).parentElement.classList.remove('active');
         }
+    }
+}
+
+function activate_lockboxes() {
+    for (let i = 1; i <= 6; i++) {
+        document.getElementById(`lock${i}`).disabled = false;
     }
 }
 
